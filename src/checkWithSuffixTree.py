@@ -98,7 +98,7 @@ print "percentage of Alignment - ", percent
 
 with open(alignmentResults, 'a') as f:
 	c=''
-	c+=inputFastaFile + d + percent + newLine
+	c+=inputFastaFile + d + str(percent) + newLine
 	f.write(c)
 
 exit()
