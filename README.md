@@ -55,3 +55,11 @@ OPTIONS
 -f | --file filename -> filename is a file which contains the input filenames
 
 
+OUTPUT
+
+The output is in the file specified with the option "-a|--alignment". The file will contain the file name and the percentage of its contigs that aligned to the reference file.
+
+Example - 
+BubblePoppedFastaFile.fa	100.0
+
+
