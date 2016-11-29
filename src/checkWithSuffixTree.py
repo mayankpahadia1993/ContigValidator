@@ -10,7 +10,11 @@
 
 from suffix_tree import SuffixTree
 import sys
-import pickle 
+
+try:
+    import cPickle as pickle
+except:
+    import pickle 
 
 def revc(a):
 	b=a[::-1]

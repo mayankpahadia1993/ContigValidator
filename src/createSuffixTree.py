@@ -10,7 +10,10 @@
 
 from suffix_tree import SuffixTree
 import sys
-import pickle 
+try:
+    import cPickle as pickle
+except:
+    import pickle 
 
 if(len(sys.argv)<3):
 	print "Please pass the reference genome, and outputfile to the python script"
