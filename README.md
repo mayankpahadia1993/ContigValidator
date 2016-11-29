@@ -10,6 +10,11 @@ Suffix tree is from - https://github.com/kvh/Python-Suffix-Tree
 
 We also use bwa mem to align and get the percentage. 
 
+PREREQUISITES -
+
+Python 2.7
+SuffixTree - https://github.com/kvh/Python-Suffix-Tree
+
 INSTALLATION
 
 To use the program
@@ -18,7 +23,7 @@ SSH -
 git clone git@github.com:mayankpahadia1993/validationpipeline.git
 
 
-HTML - 
+HTTPS - 
 git clone https://github.com/mayankpahadia1993/validationpipeline.git
 
 USAGE 
