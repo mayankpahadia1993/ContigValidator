@@ -37,21 +37,21 @@ bash run.sh -r referenceFile.fa -s suffixTreeOutput.p -i InputFile.fa -a Alignme
 
 OPTIONS
 
-echo "-r -s -i|-f -a are compulsory options. -i can be multiple"
+-r -s -i|-f -a are compulsory options. -i can be multiple
 
 
-echo "Use -r | --reference filename -> for passing the reference file"
+-r | --reference filename -> for passing the reference file
 
 
-echo "Use -s | --suffixtree filename  -> filename will store the suffixtree"\
+-s | --suffixtree filename  -> filename will store the suffixtree
 
 
-echo "Use -i | --input filename -> filename contains the input files to be checked"
+-i | --input filename -> filename contains the input files to be checked
 
 
-echo "Use -a | --alignment filename -> filename is the file in which alignment results will be shown"
+-a | --alignment filename -> filename is the file in which alignment results will be shown
 
 
-echo "Use -f | --file filename -> filename is a file which contains the input filenames"
+-f | --file filename -> filename is a file which contains the input filenames
 
 
