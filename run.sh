@@ -1,17 +1,13 @@
 #!/bin/bash
 
-if [ $# -lt 4 ]; then
-    echo "Your command line contains less arguments"
-    echo "-r -s -i|-f -a are compulsory options. -i can be multiple"
-    echo "Use -r | --reference filename -> for passing the reference file"
-    echo "Use -s | --suffixtree filename  -> filename will store the suffixtree"
-    echo "Use -i | --input filename -> filename contains the input files to be checked"
-    echo "Use -a | --alignment filename -> filename is the file in which alignment results will be shown"
-    echo "Use -f | --file filename -> filename is a file which contains the input filenames"
+if [ $# -lt 1 ]; then
+    echo "Use -h | --help for help"
+    exit
 
 fi
 interactive=
-inputFiles=()
+inputFiles=""
+skip=0
 
 
 while [ "$1" != "" ]; do
@@ -24,7 +20,7 @@ while [ "$1" != "" ]; do
 								suffixTreeOutput=$1
                                 ;;
         -i | --input )			shift
-								inputFiles+=($1)
+								inputFiles="$inputFiles $1"
 								;;
 		-a | --alignment )		shift
 								alignment=$1
@@ -32,12 +28,17 @@ while [ "$1" != "" ]; do
         -f | --file )			shift
 								files=$1
 								;;
+        -skip )					shift
+								skip=$1
+								;;
         -h | --help )           echo "-r -s -i|-f -a are compulsory options. -i can be multiple"
 							    echo "Use -r | --reference filename -> for passing the reference file"
 							    echo "Use -s | --suffixtree filename  -> filename will store the suffixtree"
 							    echo "Use -i | --input filename -> filename contains the input files to be checked"
 							    echo "Use -a | --alignment filename -> filename is the file in which alignment results will be shown"
 							    echo "Use -f | --file filename -> filename is a file which contains the input filenames"
+							    echo "Use -skip 1 -> to skip the Suffix Tree Creation. The default value is 0 and will create the Suffix Tree"
+							    echo "Use -h | --help -> for help"
                                 exit
                                 ;;
         * )                     echo "-r -s -i|-f -a are compulsory options. -i can be multiple"
@@ -46,37 +47,35 @@ while [ "$1" != "" ]; do
 							    echo "Use -i | --input filename -> filename contains the input files to be checked"
 							    echo "Use -a | --alignment filename -> filename is the file in which alignment results will be shown"
 							    echo "Use -f | --file filename -> filename is a file which contains the input filenames"
+							    echo "Use -skip 1 -> to skip the Suffix Tree Creation. The default value is 0 and will create the Suffix Tree"
+							    echo "Use -h | --help -> for help"
                                 exit 
     esac
     shift
 done
 
-echo "here"
-
-
-
-echo "Creating the Suffix Tree"
-
-python src/createSuffixTree.py $referenceGenome $suffixTreeOutput
+# echo "here"
 
 if [ -n "$files" ]; then
     echo "You have set the -f | --file option. Hence we will check the files mentioned in $files"
-    inputFiles=()
+    inputFiles=""
     while read line; do    
-    inputFiles+=($line)
+    inputFiles+="$inputFiles $line"
 	done < $files
 fi
 
 
-o="Output"
-for i in "${inputFiles[@]}"
-do
-	echo $i
-	output=$i$o
-	echo "Checking the input files against the tree"
-	echo $output
-	python src/checkWithSuffixTree.py $suffixTreeOutput $i $output $alignment
-done
+if [ "$skip" = 0 ]; then
+	echo "Creating the Suffix Tree"
+	python src/createSuffixTree.py $referenceGenome $suffixTreeOutput
+else
+	echo "Skipping Suffix Tree creation and using the suffix tree in $suffixTreeOutput"
+fi
+
+
+echo "Checking the input files against the tree"
+python src/checkWithSuffixTree.py $suffixTreeOutput $alignment $inputFiles
+
 
 
 

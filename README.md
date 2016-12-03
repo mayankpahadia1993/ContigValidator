@@ -10,14 +10,14 @@ Suffix tree is from - https://github.com/kvh/Python-Suffix-Tree
 
 We also use bwa mem to align and get the percentage. 
 
-PREREQUISITES -
+##PREREQUISITES -
 
 Python 2.7
 
 
 SuffixTree - https://github.com/kvh/Python-Suffix-Tree
 
-INSTALLATION
+##INSTALLATION
 
 To use the program
 
@@ -28,14 +28,14 @@ git clone git@github.com:mayankpahadia1993/validationpipeline.git
 HTTPS - 
 git clone https://github.com/mayankpahadia1993/validationpipeline.git
 
-USAGE 
+##USAGE 
 
 cd validationpipeline;
 
 
 bash run.sh -r referenceFile.fa -s suffixTreeOutput.p -i InputFile.fa -a AlignmentResults
 
-OPTIONS
+##OPTIONS
 
 -r -s -i|-f -a are compulsory options. -i can be multiple
 
@@ -55,7 +55,7 @@ OPTIONS
 -f | --file filename -> filename is a file which contains the input filenames
 
 
-OUTPUT
+##OUTPUT
 
 The output is in the file specified with the option "-a|--alignment". The file will contain the file name and the percentage of its contigs that aligned to the reference file.
 
