@@ -4,18 +4,25 @@ It uses simple exact matching using a suffix tree and bwa mem and outputs the al
 
 It also checks how many kmers were found in the assembly as compared to the reference genome. 
 
-To get the kmer counts, we use dsk. 
+To get the kmer counts, we use dsk - https://github.com/GATB/dsk
 
 Suffix tree is from - https://github.com/kvh/Python-Suffix-Tree
 
-We also use bwa mem to align and get the percentage. 
+We also use bwa mem to align and get the percentage - https://github.com/lh3/bwa
 
 ##PREREQUISITES -
 
 Python 2.7
 
 
-SuffixTree - https://github.com/kvh/Python-Suffix-Tree
+BWA - version used bwa-0.7.15-r1140, Should be present in the PATH
+Install using homebrew - brew install bwa
+
+DSK - version used 2.1.0, Should be present in the PATH
+Install using homebrew - brew install dsk
+
+SAMTOOLS - version used 1.3.1, Should be present in the PATH
+Install using homebrew - brew install samtools
 
 ##INSTALLATION
 
@@ -53,6 +60,17 @@ bash run.sh -r referenceFile.fa -s suffixTreeOutput.p -i InputFile.fa -a Alignme
 
 
 -f | --file filename -> filename is a file which contains the input filenames
+
+-suffixskip 1 -> to skip the Suffix Tree Creation. The default value is 0 and will create the Suffix Tree
+
+
+-bwaskip 1 -> to skip the bwa step. The default value is 0 and it will do the bwa step
+
+
+-kmer-size Integer -> The integer given here would be chosen as the kmer size. Default is 30. 
+
+
+-abundance-min Integer -> The integer given here would be chosen as the abundance min. Default is 3.
 
 
 ##OUTPUT

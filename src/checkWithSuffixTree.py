@@ -38,7 +38,7 @@ def find_substring(stree, substring):
 			return 1
 	return 0
 
-if(len(sys.argv)<5):
+if(len(sys.argv)<4):
 	print "Please pass the reference genome, AlignmentResultsFile and InputFiles to the python script. Any number of inputfiles can be passed( passing at least 1 file is mandatory)"
 	print "Example - python checkWithSuffixTree.py suffixTreeOutput.p AlignmentResults.txt inputFiles1.fa inputFiles2.fa inputFiles3.fa"
 	exit()
@@ -55,7 +55,7 @@ newLine='\n'
 
 with open(alignmentResults, 'w') as f:
 		c=''
-		c+="Filename" + d + "Align Percentage" + newLine
+		c+="Align Percentage" + newLine
 		f.write(c)
 for filename in inputFiles:
 	inputFasta=[]
@@ -87,9 +87,9 @@ for filename in inputFiles:
 	# 	print i
 	outputResultsFile = filename+".out"
 
-	if(len(inputFasta)!=len(inputFastaId)):
-		print "some problem because total number of reads don't match total number of ids"
-		exit()
+	# if(len(inputFasta)!=len(inputFastaId)):
+	# 	print "some problem because total number of reads don't match total number of ids"
+	# 	exit()
 	stree = pickle.load( open( suffixTree, "rb" ) )
 	# print "Suffix Tree loaded"
 	with open(outputResultsFile,'w') as f:
@@ -111,8 +111,9 @@ for filename in inputFiles:
 
 	with open(alignmentResults, 'a') as f:
 		c=''
-		c+=filename + d + str(percent) + newLine
-		print c,
+		# c+=filename + d + str(percent) + newLine
+		c+=str(percent) + newLine
+		# print c,
 		f.write(c)
 
 exit()
