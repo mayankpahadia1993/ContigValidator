@@ -14,6 +14,8 @@ try:
     import cPickle as pickle
 except:
     import pickle 
+# import jsonpickle
+
 
 if(len(sys.argv)<3):
 	print "Please pass the reference genome, and outputfile to the python script"
@@ -50,6 +52,11 @@ stree = SuffixTree(referenceGenome[0])
 print "Suffix Tree created"
 
 pickle.dump( stree, open( outputResultsFile, "wb" ) )
+
+# suffixTreeJson = jsonpickle.encode(stree)
+
+# with open(outputResultsFile, "wb") as f:
+# 	f.write(suffixTreeJson)
 
 print "Suffix Tree saved"
 

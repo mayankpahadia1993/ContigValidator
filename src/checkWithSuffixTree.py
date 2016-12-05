@@ -16,6 +16,7 @@ try:
     import cPickle as pickle
 except:
     import pickle 
+# import jsonpickle
 
 def revc(a):
 	b=a[::-1]
@@ -51,12 +52,20 @@ inputFiles = sys.argv[3:]
 d="\t"
 newLine='\n'
 
+stree = pickle.load( open( suffixTree, "rb" ) )
+
+# with open( suffixTree, "rb" ) as f:
+#     loadedSuffixTree = f.read()
+
+# stree = jsonpickle.decode(loadedSuffixTree)
 
 
-with open(alignmentResults, 'w') as f:
-		c=''
-		c+="Align Percentage" + newLine
-		f.write(c)
+
+print "Suffix Tree loaded"
+with open(alignmentResults, 'w+') as f:
+	c=''
+	c+="Align Percentage" + newLine
+	f.write(c)
 for filename in inputFiles:
 	inputFasta=[]
 	inputFastaId=[]
@@ -90,8 +99,8 @@ for filename in inputFiles:
 	# if(len(inputFasta)!=len(inputFastaId)):
 	# 	print "some problem because total number of reads don't match total number of ids"
 	# 	exit()
-	stree = pickle.load( open( suffixTree, "rb" ) )
-	# print "Suffix Tree loaded"
+	
+	
 	with open(outputResultsFile,'w') as f:
 		for i in range(0,len(inputFasta)):
 			# outputResults[inputFastaId[i]] = find_substring(stree,inputFasta[i])

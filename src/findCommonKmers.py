@@ -11,7 +11,7 @@
 import sys
 from collections import defaultdict
 
-if(len(sys.argv)<6):
+if(len(sys.argv)<5):
 	print "Please pass the input files"
 	print "Example - python findCommonKmers.py tempKmerOut.txt input1.txt input2.txt commonKmersFrom1in2.txt commonKmersFrom2in1.txt"
 	exit()
@@ -22,7 +22,7 @@ inputs = sys.argv[3:]
 
 kmers = defaultdict(lambda: 0)
 
-
+print input1, inputs
 
 
 countInput1=0
@@ -44,6 +44,7 @@ with open(input1) as f:
 
 c=''
 ijk=0
+print countInput1
 while(ijk<len(inputs)):
 	commonFrom1 = defaultdict(lambda: 0)
 	count=0
@@ -80,15 +81,20 @@ while(ijk<len(inputs)):
 	# print "total kmers in", input1, " - ", countInput1
 	# print "total kmers in", input2, " - ", countInput2
 	# print "common kmers - ", count
-
-	percent1 = count*1.0 / countInput1
-	percent1*=100.0
+	if(countInput1 == 0):
+		percent1=0
+	else:
+		percent1 = count*1.0 / countInput1
+		percent1*=100.0
 
 	# print "common kmers from the total kmers in", input1, " - ", percent, "%"
 	
-
-	percent2 = count*1.0 / countInput2
-	percent2*=100.0
+	if(countInput2 == 0):
+		percent2=0
+	else:
+		percent2 = count*1.0 / countInput2
+		percent2*=100.0
+	
 
 	# print "common kmers from the total kmers in", input2, " - ", percent, "%"
 

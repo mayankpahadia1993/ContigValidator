@@ -127,7 +127,6 @@ else
 fi
 
 
-
 ## Adding filenames to the $alignment output file
 echo "FILENAME" > $alignment
 for i in "${inputFileArray[@]}"
@@ -297,4 +296,4 @@ rm tempout.txt
 rm tempError.txt
 
 
-
+# python src/findCommonKmers.py $tempKmerOut "$referenceGenome.kmercount" $commonKmerInputFile

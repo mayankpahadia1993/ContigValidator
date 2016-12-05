@@ -16,12 +16,15 @@ Python 2.7
 
 
 BWA - version used bwa-0.7.15-r1140, Should be present in the PATH
+
 Install using homebrew - brew install bwa
 
 DSK - version used 2.1.0, Should be present in the PATH
+
 Install using homebrew - brew install dsk
 
 SAMTOOLS - version used 1.3.1, Should be present in the PATH
+
 Install using homebrew - brew install samtools
 
 ##INSTALLATION
@@ -44,7 +47,7 @@ bash run.sh -r referenceFile.fa -s suffixTreeOutput.p -i InputFile.fa -a Alignme
 
 ##OPTIONS
 
--r -s -i|-f -a are compulsory options. -i can be multiple
+-r -s -i|-f are compulsory options. -i can be multiple
 
 
 -r | --reference filename -> for passing the reference file
@@ -53,13 +56,14 @@ bash run.sh -r referenceFile.fa -s suffixTreeOutput.p -i InputFile.fa -a Alignme
 -s | --suffixtree filename  -> filename will store the suffixtree
 
 
--i | --input filename -> filename contains the input files to be checked
+-i | --input filename -> filename contains the input file to be checked
 
 
--a | --alignment filename -> filename is the file in which alignment results will be shown
+-a | --alignment filename -> filename is the file in which alignment results will be shown. Default Value is alignmentResults.txt
 
 
 -f | --file filename -> filename is a file which contains the input filenames
+
 
 -suffixskip 1 -> to skip the Suffix Tree Creation. The default value is 0 and will create the Suffix Tree
 
