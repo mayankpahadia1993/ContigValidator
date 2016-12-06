@@ -2,9 +2,9 @@ This is a validation pipeline for checking the accuracy of an assembler.
 
 This pipeline does the following things - 
 
-1. [Uses simple exact matching to get the alignment percent of a read/contig with the reference]
-2. [Uses BWA to find the alignment of read/contig with the reference]
-3. [Compares the percentage of kmers common between the reads/contig and reference]
+1. Uses simple exact matching to get the alignment percent of a read/contig with the reference
+2. Uses BWA to find the alignment of read/contig with the reference
+3. Compares the percentage of kmers common between the reads/contig and reference
 
 For Simple Exact Matching, we use a suffix tree and create a suffix tree of the reference and check if the contigs/reads in the file are present in the suffix tree or not.
 
@@ -103,9 +103,9 @@ test/reads.fa	22.136	100.00%	100.0%	1.27982540829%
 
 The output has 5 columns - Filename, Align Percentage, BWA Percentage, Percentage of Kmers from Reference File in Input File and Percentage of Kmers from Input File in Reference File
 
-1. [Filename] - This column has the name of the input files(reads/contigs).
-2. [Align Percentage] - This column has the align percentage calculated using simple exact matching.
-3. [BWA Percentage] - This column has the align percentage calculated using BWA MEM.
-4. [Percentage of Kmers from Reference File in Input File] - This column has the percentage of kmers common from the reference file in the input file.
-5. [Percentage of Kmers from Input File in Reference File] - This column has the percentage of kmers common from the input file in the reference file.
+1. Filename - This column has the name of the input files(reads/contigs).
+2. Align Percentage - This column has the align percentage calculated using simple exact matching.
+3. BWA Percentage - This column has the align percentage calculated using BWA MEM.
+4. Percentage of Kmers from Reference File in Input File - This column has the percentage of kmers common from the reference file in the input file.
+5. Percentage of Kmers from Input File in Reference File - This column has the percentage of kmers common from the input file in the reference file.
 
