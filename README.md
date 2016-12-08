@@ -150,7 +150,7 @@ This file stores the suffix tree of the reference which was created. This file i
 ###Bam File
 This file is generated for all the inputs. It stores the alignments done by bwa. It is generated only if bwa step is not skipped.
 
-###.alignments
+###*.alignments
 This file is generated for all the inputs. In the file, there is one row for one contig/read. Each row has two columns. First column is the contig/read id. The second column is a binary number. '1' represents that the contig is present exactly in the reference. '0' represents that it is not. It is tab separated.
 
 #Acknowledgement
