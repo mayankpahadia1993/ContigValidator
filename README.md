@@ -114,21 +114,21 @@ Example -
 FILENAME	Align Percentage	BWA Percentage	Percentage of Kmers from Reference File in Input File	Percentage of Kmers from Input File in Reference File
 test/reads.fa	22.136	100.00%	100.0%	1.27982540829%
 
-The output has 5 columns - Filename, Align Percentage, BWA Percentage, Percentage of Kmers from Reference File in Input File and Percentage of Kmers from Input File in Reference File
+The output has 5 columns - 
 
-a. Filename - This column has the name of the input files(reads/contigs).
-
-
-b. Align Percentage - This column has the align percentage calculated using simple exact matching.
+	a. Filename - This column has the name of the input files(reads/contigs).
 
 
-c. BWA Percentage - This column has the align percentage calculated using BWA MEM.
+	b. Align Percentage - This column has the align percentage calculated using simple exact matching.
 
 
-d. Percentage of Kmers from Reference File in Input File - This column has the percentage of kmers common from the reference file in the input file.
+	c. BWA Percentage - This column has the align percentage calculated using BWA MEM.
 
 
-e. Percentage of Kmers from Input File in Reference File - This column has the percentage of kmers common from the input file in the reference file.
+	d. Percentage of Kmers from Reference File in Input File - This column has the percentage of kmers common from the reference file in the input file.
+
+
+	e. Percentage of Kmers from Input File in Reference File - This column has the percentage of kmers common from the input file in the reference file.
 
 
 
