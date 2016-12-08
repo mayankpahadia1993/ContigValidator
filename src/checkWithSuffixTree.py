@@ -94,7 +94,7 @@ for filename in inputFiles:
 	# print "inputFasta coming up"
 	# for i in inputFasta:
 	# 	print i
-	outputResultsFile = filename+".out"
+	outputResultsFile = filename+".alignments"
 
 	# if(len(inputFasta)!=len(inputFastaId)):
 	# 	print "some problem because total number of reads don't match total number of ids"

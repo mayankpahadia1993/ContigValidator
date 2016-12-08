@@ -22,9 +22,6 @@ inputs = sys.argv[3:]
 
 kmers = defaultdict(lambda: 0)
 
-print input1, inputs
-
-
 countInput1=0
 
 delim="\t"

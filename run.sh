@@ -14,6 +14,7 @@ bwaskip=0
 flagReference=0
 flagSuffix=0
 flagInput=0
+clean=0
 RED='\033[0;31m'
 NC='\033[0m' #No Color
 kmersize=30
@@ -68,6 +69,9 @@ while [ "$1" != "" ]; do
 		-abundance-min )		shift
 								abundancemin=$1
 								;;
+		-clean )				shift
+								clean=$1
+								;;
         -h | --help )           printf -- "$optionInfo"
                                 exit
                                 ;;
@@ -80,21 +84,18 @@ done
 # echo "here"
 if [ "$flagReference" = 0 ]; then
 	echo "You didn't set the reference flag (-r | --reference)"
-	echo
 	printf -- "$optionInfo"
 	exit
 fi
 
 if [ "$flagSuffix" = 0 ]; then
 	echo "You didn't set the suffix tree flag (-s | --suffixtree)"
-	echo
 	printf -- "$optionInfo"
 	exit
 fi
 
 if [ "$flagInput" = 0 ]; then
 	echo "You didn't set the input flag (-i | --input) or the file flag(-f | --file). You need to set one of them."
-	echo
 	printf -- "$optionInfo"
 	exit
 fi
@@ -239,6 +240,9 @@ if [ "$?" -gt 0 ]; then
 		printf "${NC}"
 fi
 echo "dsk2ascii done"
+if [ "$clean" = 0 ]; then
+	rm -f $h5file
+fi
 
 ## dsk on files
 
@@ -261,16 +265,20 @@ do
 			cat tempError.txt
 			printf "${NC}"
 	fi
+	if [ "$clean" = 0 ]; then
+		rm -f $h5file
+	fi
 done
 
 ##Setting up the input for findCommonKmers.py file
 
 commonKmerInputFile=""
-
+inputkmercountfile=""
 for i in "${inputFileArray[@]}"
 do
 	file1="$i.commonKmers12"
 	file2="$i.commonKmers21"
+	inputkmercountfile+=" $i.kmercount"
 	commonKmerInputFile+=" $i.kmercount $file1 $file2"
 done
 
@@ -294,6 +302,13 @@ fi
 
 rm -f tempout.txt
 rm -f tempError.txt
+
+if [ "$clean" = 0 ]; then
+	echo "In clean"
+	rm -f $kmercountfile
+	rm -f $inputkmercountfile
+	rm -f $referenceGenome.*
+fi
 
 
 # python src/findCommonKmers.py $tempKmerOut "$referenceGenome.kmercount" $commonKmerInputFile
