@@ -119,7 +119,7 @@ if [ "$suffixskip" = 0 ]; then
 	else
 		printf "${RED}ERROR - "
 		# echo -e "I ${RED}love${NC}"
-		cat tempError.txt | grep Error
+		cat tempError.txt
 		printf "${NC}"
 	fi
 else
@@ -144,11 +144,11 @@ if [ "$?" = 0 ]; then
 	cat tempout.txt
 	paste $alignment tempSuffix.txt > tempout.txt
 	cat tempout.txt > $alignment
-	rm tempSuffix.txt
+	rm -f tempSuffix.txt
 else
 	printf "${RED}ERROR - "
 	# echo -e "I ${RED}love${NC}"
-	cat tempError.txt | grep Error
+	cat tempError.txt
 	printf "${NC}"
 fi
 
@@ -167,7 +167,7 @@ if [ "$bwaskip" = 0 ]; then
 	else
 		printf "${RED}ERROR - "
 		# echo -e "I ${RED}love${NC}"
-		cat tempError.txt | grep Error
+		cat tempError.txt
 		printf "${NC}"
 	fi
 
@@ -210,7 +210,7 @@ if [ "$bwaskip" = 0 ]; then
 
 	paste $alignment tempBwaOutput.txt > tempout.txt
 	cat tempout.txt > $alignment
-	rm tempBwaOutput.txt
+	rm -f tempBwaOutput.txt
 
 else
 	echo "Skipping BWA"
@@ -284,16 +284,16 @@ if [ "$?" = 0 ]; then
 	cat tempout.txt
 	paste $alignment $tempKmerOut > tempout.txt
 	cat tempout.txt > $alignment
-	rm $tempKmerOut
+	rm -f $tempKmerOut
 else
 	printf "${RED}ERROR - "
 	# echo -e "I ${RED}love${NC}"
-	cat tempError.txt | grep Error
+	cat tempError.txt
 	printf "${NC}"
 fi
 
-rm tempout.txt
-rm tempError.txt
+rm -f tempout.txt
+rm -f tempError.txt
 
 
 # python src/findCommonKmers.py $tempKmerOut "$referenceGenome.kmercount" $commonKmerInputFile

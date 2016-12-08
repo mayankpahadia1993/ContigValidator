@@ -114,9 +114,12 @@ for filename in inputFiles:
 			f.write(c)
 
 	# print "total Alignments - ",countAlignments
-	percent = 1.0*countAlignments/len(inputFastaId)
-	percent = percent*100.0
-	# print "percentage of Alignment - ", percent  
+	if(len(inputFastaId)==0):
+		percent = 0
+	else:
+		percent = 1.0*countAlignments/len(inputFastaId)
+		percent = percent*100.0
+		# print "percentage of Alignment - ", percent  
 
 	with open(alignmentResults, 'a') as f:
 		c=''
