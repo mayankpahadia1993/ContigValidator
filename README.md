@@ -53,6 +53,7 @@ Output - "EVERYTHING IS WELL" at the end or an Error if something didn't go as p
 #USAGE 
 
 
+	#In the validationpipeline folder
 	bash run.sh -r referenceFile.fa -s suffixTree.p -i InputFile.fa -a AlignmentResults
 
 #OPTIONS
@@ -137,20 +138,20 @@ FILENAME	Align Percentage	BWA Percentage	Percentage of Kmers from Reference File
 test/reads.fa	22.136	100.00%	100.0%	1.27982540829%
 
 ###*.commonKmers12 
-These files are generated for all the input files. In this file, there is one row for one kmer from the input file. Every row contains two columns. The first column is the kmer and the second column is a binary number in which '1' represents the kmer is present in the reference file and '0' represents it is not. It is tab separated. 
+These files are generated for all the input files. In this file, there is one row for one kmer from the input file. Every row contains two columns. The first column is the kmer and the second column is a binary number. '1' represents the kmer is present in the reference file and '0' represents it is not. It is tab separated. 
 
 
 ###*.commonKmers21
-These files are generated for all the input files. In this file, there is one row for one kmer from the reference file. Every row contains two columns. The first column is the kmer and the second column is a binary number in which '1' represents the kmer is present in the input file and '0' represents it is not. It is tab separated.
+These files are generated for all the input files. In this file, there is one row for one kmer from the reference file. Every row contains two columns. The first column is the kmer and the second column is a binary number. '1' represents the kmer is present in the input file and '0' represents it is not. It is tab separated.
 
 ###suffixTreeOutput File
-This file stores the suffix tree of the reference which was created. This file is generated only if suffixskip option is at 0 i.e. '-suffixskip 0' option is set.
+This file stores the suffix tree of the reference which was created. This file is generated only if suffixskip option is at 0 i.e. `-suffixskip 0` option is set.
 
 ###Bam File
 This file is generated for all the inputs. It stores the alignments done by bwa. It is generated only if bwa step is not skipped.
 
 ###.alignments
-This file is generated for all the inputs. In the file, there is one row for one contig/read. Each row has two columns. First column is the contig/read id. The second column is a binary number. '1' represents that the contig is present exactly in the reference. '0' represents that it is not. 
+This file is generated for all the inputs. In the file, there is one row for one contig/read. Each row has two columns. First column is the contig/read id. The second column is a binary number. '1' represents that the contig is present exactly in the reference. '0' represents that it is not. It is tab separated.
 
 #Acknowledgement
 
