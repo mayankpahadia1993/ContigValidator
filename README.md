@@ -49,11 +49,11 @@ This pipeline does the following things -
 To download the program, you can clone the repository from github, either using SSH: 
 
 	
-	git clone git@github.com:mayankpahadia1993/validationpipeline.git
+	git clone git@github.com:mayankpahadia1993/ContigValidator.git
 	
 or HTTPS
 	
-	git clone https://github.com/mayankpahadia1993/validationpipeline.git
+	git clone https://github.com/mayankpahadia1993/ContigValidator.git
 
 No installation is needed and the program is ready to run.
 
@@ -64,7 +64,7 @@ To make sure that the program was installed correctly and works as intended, you
 	cd validationpipeline/test/;
 	bash test.sh;
 
-The output should  report the message "TEST PASSED SUCCESSFULLY" at the end to indicate that the insallation is working properly. Otherwise, an error message should appear indicating the source of the error. 
+The output should  report the message "TEST PASSED SUCCESSFULLY" at the end to indicate that the installation is working properly. Otherwise, an error message should appear indicating the source of the error. 
 
 
 #Usage
@@ -83,7 +83,7 @@ The output should  report the message "TEST PASSED SUCCESSFULLY" at the end to i
 
 Where: 
 
-`-r <filename>`, `--reference <filename>`: the reference genome. This should be a fast file.
+`-r <filename>`, `--reference <filename>`: the reference genome. This should be a fasta file.
 
 
 `-s <filename>`, `--suffixtree <filename>`: The location of the suffix tree. If the -suffixskip=0 option is used, this is the location of the output file containing the suffix tree. If the -suffixskip=1 option is used, this is the location of the input file which contains the suffix tree. 
@@ -98,12 +98,10 @@ Where:
 `-a <filename>`, `--alignment <filename>`: The location of the output file with the results of the analysis (default: alignmentResults.txt)
 
 
+`-suffixskip <0|1>`: ContigValidator needs to build a suffix tree for the reference file before doing alignment. By default (value 0), the suffix tree is created on the fly and written to the file specified by the -s option so that it can be reused in future runs. If, on the other hand, a suffix tree file is already available from a previous run, then you can set suffixskip to 1 in order to skip the creation of the suffix tree and instead load it from the fly specified by the -s option.
 
 
-`-suffixskip <0|1>`: the ContigValidator needs to build a suffix tree for the reference file before doing alignment. By default (value 0), the suffix tree is created on the fly and written to the file specified by the -s option so that it can be reused in future runs. If, on the other hand, a suffix tree file is already available from a previous, then you can set suffixskip to 1 in order to skip the creation of the suffix tree and instead load it from the fly specified by the -s option.
-
-
-`-bwaskip <0|1>`: ContigValidator uses BWA to align the contigs to the reference. To skip this step, setp the value of this option to 1.  (Default: 0)
+`-bwaskip <0|1>`: ContigValidator uses BWA to align the contigs to the reference. To skip this step, set the value of this option to 1.  (Default: 0)
 
 
 `-kmer-size <int>` The size of the kmers used. (Default: 30) 
@@ -118,9 +116,9 @@ use `-h/--help` for detailed help message.
 
 #Input
 
-The mandatory input to the program is the reference file, suffix tree file and the files containing reads and contigs.
+The mandatory input to the program is the reference file, suffix tree file and the files containing contigs.
 
-The reference file and read files must be in the fasta format. The reads here usually mean contigs or unitigs which we get after running an assembler.
+The reference file and contig files must be in the fasta format. The contigs here usually mean unitigs which we get after running an assembler.
 
 Suffix Tree file is the filename in which the suffix tree gets stored, if it has been created in the pipeline. The creation works if the `-suffixskip 0` option is set, which is also the default option. 
 
