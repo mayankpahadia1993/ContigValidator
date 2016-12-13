@@ -68,41 +68,40 @@ Output - "EVERYTHING IS WELL" at the end or an Error if something didn't go as p
 -r -s -i|-f are compulsory options. -i can be multiple
 
 
-./varmatch  -r <file> -s <file> -i <file> [-a <file>] [-f <file>] [-suffixskip <0|1>] [-bwaskip <0|1>]
-     [-kmer-size <int>] [-abundance-min <int>]
+`bash run.sh  -r <file> -s <file> -i <file> [-a <file>] [-f <file>] [-suffixskip <0|1>] [-bwaskip <0|1>] [-kmer-size <int>] [-abundance-min <int>]`
 
 
 Where: 
 
-	`-r <file>`, `--reference <file>` for passing the reference file
+`-r <file>`, `--reference <file>` for passing the reference file
 
 
-	`-s <file>`, `--suffixtree <file>` filename will store the suffixtree, or contains the suffixtree if it has already been created.
+`-s <file>`, `--suffixtree <file>` filename will store the suffixtree, or contains the suffixtree if it has already been created.
 
 
-	`-i <file>`, `--input <file>` filename contains the input file to be checked
+`-i <file>`, `--input <file>` filename contains the input file to be checked
 
 
-	`-a <file>`, `--alignment <file>` filename is the file in which alignment results will be shown. Default Value is alignmentResults.txt
+`-a <file>`, `--alignment <file>` filename is the file in which alignment results will be shown. Default Value is alignmentResults.txt
 
 
-	`-f <file>`, `--file <file>` filename is a file which contains the input filenames. One filename per line.
+`-f <file>`, `--file <file>` filename is a file which contains the input filenames. One filename per line.
 
 
-	`-suffixskip <0|1>` to skip the Suffix Tree Creation. (Default: 0)
+`-suffixskip <0|1>` to skip the Suffix Tree Creation. (Default: 0)
 	0: Create the Suffix Tree
 	1: Skip the suffix tree creation step
 
 
-	`-bwaskip <0|1>` to skip the bwa step. (Default: 0)
+`-bwaskip <0|1>` to skip the bwa step. (Default: 0)
 	0: Perform BWA on inputs
 	1: Skip BWA step
 
 
-	`-kmer-size <int>` The integer given here would be chosen as the kmer size. (Default: 30) 
+`-kmer-size <int>` The integer given here would be chosen as the kmer size. (Default: 30) 
 
 
-	`-abundance-min <int>` The integer given here would be chosen as the abundance min. (Default: 3) 
+`-abundance-min <int>` The integer given here would be chosen as the abundance min. (Default: 3) 
 	Abundance min represents the minimum count of a kmer which will be stored. 
 
 ### Help Information:
