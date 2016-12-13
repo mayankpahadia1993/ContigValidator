@@ -82,19 +82,23 @@ Where:
 `-i <file>`, `--input <file>` filename contains the input file to be checked
 
 
-`-a <file>`, `--alignment <file>` filename is the file in which alignment results will be shown. Default Value is alignmentResults.txt
+`-a <file>`, `--alignment <file>` filename is the file in which alignment results will be shown. (Default: alignmentResults.txt)
 
 
 `-f <file>`, `--file <file>` filename is a file which contains the input filenames. One filename per line.
 
 
 `-suffixskip <0|1>` to skip the Suffix Tree Creation. (Default: 0)
+
 	0: Create the Suffix Tree
+
 	1: Skip the suffix tree creation step
 
 
 `-bwaskip <0|1>` to skip the bwa step. (Default: 0)
+
 	0: Perform BWA on inputs
+
 	1: Skip BWA step
 
 
@@ -102,7 +106,8 @@ Where:
 
 
 `-abundance-min <int>` The integer given here would be chosen as the abundance min. (Default: 3) 
-	Abundance min represents the minimum count of a kmer which will be stored. 
+
+	Abundance min represents the minimum count of a kmer. Kmers with count equal or greater to abundance min will be stored. 
 
 ### Help Information:
 
@@ -158,11 +163,11 @@ FILENAME	Align Percentage	BWA Percentage	Percentage of Kmers from Reference File
 test/reads.fa	22.136	100.00%	100.0%	1.27982540829%
 
 ###*.commonKmers12 
-These files are generated for all the input files. In this file, there is one row for one kmer from the input file. Every row contains two columns. The first column is the kmer and the second column is a binary number. '1' represents the kmer is present in the reference file and '0' represents it is not. It is tab separated. 
+These files are generated for all the input files. In this file, there is one row per kmer from the input file. Every row contains two columns. The first column is the kmer and the second column is a binary number. '1' represents the kmer is present in the reference file and '0' represents it is not. It is tab separated. 
 
 
 ###*.commonKmers21
-These files are generated for all the input files. In this file, there is one row for one kmer from the reference file. Every row contains two columns. The first column is the kmer and the second column is a binary number. '1' represents the kmer is present in the input file and '0' represents it is not. It is tab separated.
+These files are generated for all the input files. In this file, there is one row per kmer from the reference file. Every row contains two columns. The first column is the kmer and the second column is a binary number. '1' represents the kmer is present in the input file and '0' represents it is not. It is tab separated.
 
 ###suffixTreeOutput File
 This file stores the suffix tree of the reference which was created. This file is generated only if suffixskip option is at 0 i.e. `-suffixskip 0` option is set.
@@ -171,7 +176,7 @@ This file stores the suffix tree of the reference which was created. This file i
 This file is generated for all the inputs. It stores the alignments done by bwa. It is generated only if bwa step is not skipped.
 
 ###*.alignments
-This file is generated for all the inputs. In the file, there is one row for one contig/read. Each row has two columns. First column is the contig/read id. The second column is a binary number. '1' represents that the contig is present exactly in the reference. '0' represents that it is not. It is tab separated.
+This file is generated for all the inputs. In the file, there is one row per contig/read. Each row has two columns. First column is the contig/read id. The second column is a binary number. '1' represents that the contig is present exactly in the reference. '0' represents that it is not. It is tab separated.
 
 
 # Contact
