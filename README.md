@@ -1,5 +1,15 @@
-#ValidationPipeline
-This is a validation pipeline for checking the accuracy of an assembler. 
+#ContigValidator
+
+This is a pipeline for validating the accuracy of a set of contigs with respect to a known referene genome. 
+The set of contigs can be just the read themselves, or unitigs, or any other type of contig.
+Given a fasta reference genome and a file containing a set of contigs, ContigValidator reports:
+
+1. The percentage of contigs that occur exactly in the reference
+2. The percentage of contigs that align to the reference.
+3. Identifies k-mers shared between the contigs and the reference and reports the corresponding percentages.
+
+
+<!-- This is a validation pipeline for checking the accuracy of an assembler. 
 
 The inputs to the pipeline are fasta files. A fasta file for the reference genome and one or more fasta files for contigs/reads.
 
@@ -8,10 +18,8 @@ This pipeline does the following things -
 1. Uses simple exact matching to get the alignment percent of a read/contig with the reference
 2. Uses BWA to find the alignment of read/contig with the reference
 3. Compares the percentage of kmers common between the reads/contig and reference
+--->
 
-#Authors
-- Mayank Pahadia (The Pennsylvania State University)
-- Paul Medvedev (The Pennsylvania State University)
 
 #Release Date
 ###TBD
@@ -38,23 +46,25 @@ This pipeline does the following things -
 
 #Installation
 
-To download and use the program
+To download the program, you can clone the repository from github, either using SSH: 
 
-SSH 
 	
-	git clone git@github.com:mayankpahadia1993/validationpipeline.git
-
-
-HTTPS
+	git clone git@github.com:mayankpahadia1993/ContigValidator.git
 	
-	git clone https://github.com/mayankpahadia1993/validationpipeline.git
+or HTTPS
+	
+	git clone https://github.com/mayankpahadia1993/ContigValidator.git
+
+No installation is needed and the program is ready to run.
 
 #Testing
-			
+
+To make sure that the program was installed correctly and works as intended, you can test it:
+
 	cd validationpipeline/test/;
 	bash test.sh;
 
-Output - "EVERYTHING IS WELL" at the end or an Error if something didn't go as planned.
+The output should  report the message "TEST PASSED SUCCESSFULLY" at the end to indicate that the installation is working properly. Otherwise, an error message should appear indicating the source of the error. 
 
 
 #Usage
@@ -68,46 +78,37 @@ Output - "EVERYTHING IS WELL" at the end or an Error if something didn't go as p
 -r -s -i|-f are compulsory options. -i can be multiple
 
 
-`bash run.sh  -r <file> -s <file> -i <file> [-a <file>] [-f <file>] [-suffixskip <0|1>] [-bwaskip <0|1>] [-kmer-size <int>] [-abundance-min <int>]`
+`bash run.sh  -r <filename> -s <filename> [-i <filename>]  [-f <filename>]  [-a <filename>] [-suffixskip <0|1>] [-bwaskip <0|1>] [-kmer-size <int>] [-abundance-min <int>]`
 
 
 Where: 
 
-`-r <file>`, `--reference <file>` for passing the reference file
+`-r <filename>`, `--reference <filename>`: the reference genome. This should be a fasta file.
 
 
-`-s <file>`, `--suffixtree <file>` filename will store the suffixtree, or contains the suffixtree if it has already been created.
+`-s <filename>`, `--suffixtree <filename>`: The location of the suffix tree. If the -suffixskip=0 option is used, this is the location of the output file containing the suffix tree. If the -suffixskip=1 option is used, this is the location of the input file which contains the suffix tree. 
 
 
-`-i <file>`, `--input <file>` filename contains the input file to be checked
+`-i <filename>`, `--input <filename>`: The location of the contig file. This should be a fasta file, with each entry corresponding to a contig. This option must be specified if the -f option is not specified. The -i option may be used multiple times to specify multiple input files.
 
 
-`-a <file>`, `--alignment <file>` filename is the file in which alignment results will be shown. (Default: alignmentResults.txt)
+`-f <filename>`, `--file <filename>`: A file which contains the names of contig files, one per line. This option can be used in place of the -i option when there are multiple files. This option must be specified if the -i option is not specified.
 
 
-`-f <file>`, `--file <file>` filename is a file which contains the input filenames. One filename per line.
+`-a <filename>`, `--alignment <filename>`: The location of the output file with the results of the analysis (default: alignmentResults.txt)
 
 
-`-suffixskip <0|1>` to skip the Suffix Tree Creation. (Default: 0)
-
-	0: Create the Suffix Tree
-
-	1: Skip the suffix tree creation step
+`-suffixskip <0|1>`: ContigValidator needs to build a suffix tree for the reference file before doing alignment. By default (value 0), the suffix tree is created on the fly and written to the file specified by the -s option so that it can be reused in future runs. If, on the other hand, a suffix tree file is already available from a previous run, then you can set suffixskip to 1 in order to skip the creation of the suffix tree and instead load it from the fly specified by the -s option.
 
 
-`-bwaskip <0|1>` to skip the bwa step. (Default: 0)
-
-	0: Perform BWA on inputs
-
-	1: Skip BWA step
+`-bwaskip <0|1>`: ContigValidator uses BWA to align the contigs to the reference. To skip this step, set the value of this option to 1.  (Default: 0)
 
 
-`-kmer-size <int>` The integer given here would be chosen as the kmer size. (Default: 30) 
+`-kmer-size <int>` The size of the kmers used. (Default: 30) 
 
 
-`-abundance-min <int>` The integer given here would be chosen as the abundance min. (Default: 3) 
+`-abundance-min <int>`: Kmers that occur in the contigs less than abundance-min times are treated as not present in the contig file.  (Default: 3) 
 
-	Abundance min represents the minimum count of a kmer. Kmers with count equal or greater to abundance min will be stored. 
 
 ### Help Information:
 
@@ -115,9 +116,9 @@ use `-h/--help` for detailed help message.
 
 #Input
 
-The mandatory input to the program is the reference file, suffix tree file and the files containing reads and contigs.
+The mandatory input to the program is the reference file, suffix tree file and the files containing contigs.
 
-The reference file and read files must be in the fasta format. The reads here usually mean contigs or unitigs which we get after running an assembler.
+The reference file and contig files must be in the fasta format. The contigs here usually mean unitigs which we get after running an assembler.
 
 Suffix Tree file is the filename in which the suffix tree gets stored, if it has been created in the pipeline. The creation works if the `-suffixskip 0` option is set, which is also the default option. 
 
@@ -135,7 +136,7 @@ These are the output files that are generated by the pipeline -
 6. *.alignments
 
 
-###AlignmentResults 
+###1. AlignmentResults 
 The output is in the file specified with the option "-a|--alignment". Each row represents a file and its results. Each row will contain a maximum of 5 columns, all separated by tabs.
 
 The 5 columns are - 
@@ -162,21 +163,25 @@ FILENAME	Align Percentage	BWA Percentage	Percentage of Kmers from Reference File
 
 test/reads.fa	22.136	100.00%	100.0%	1.27982540829%
 
-###*.commonKmers12 
+###2. *.commonKmers12 
 These files are generated for all the input files. In this file, there is one row per kmer from the input file. Every row contains two columns. The first column is the kmer and the second column is a binary number. '1' represents the kmer is present in the reference file and '0' represents it is not. It is tab separated. 
 
 
-###*.commonKmers21
+###3. *.commonKmers21
 These files are generated for all the input files. In this file, there is one row per kmer from the reference file. Every row contains two columns. The first column is the kmer and the second column is a binary number. '1' represents the kmer is present in the input file and '0' represents it is not. It is tab separated.
 
-###suffixTreeOutput File
+###4. suffixTreeOutput File
 This file stores the suffix tree of the reference which was created. This file is generated only if suffixskip option is at 0 i.e. `-suffixskip 0` option is set.
 
-###Bam File
+###5. Bam File
 This file is generated for all the inputs. It stores the alignments done by bwa. It is generated only if bwa step is not skipped.
 
-###*.alignments
+###6. *.alignments
 This file is generated for all the inputs. In the file, there is one row per contig/read. Each row has two columns. First column is the contig/read id. The second column is a binary number. '1' represents that the contig is present exactly in the reference. '0' represents that it is not. It is tab separated.
+
+#Authors
+- Mayank Pahadia (The Pennsylvania State University)
+- Paul Medvedev (The Pennsylvania State University)
 
 
 # Contact
