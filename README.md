@@ -78,7 +78,7 @@ The output should  report the message "TEST PASSED SUCCESSFULLY" at the end to i
 -r -s -i|-f are compulsory options. -i can be multiple
 
 
-`bash run.sh  -r <filename> [-s <filename>] [-suffixsave <0|1>] [-i <filename>]  [-f <filename>]  [-a <filename>] [-suffixskip <0|1>] [-bwaskip <0|1>] [-kmer-size <int>] [-abundance-min <int>]`
+`bash run.sh  -r <filename> [-s <filename>] [-suffixsave <0|1>] [-i <filename>]  [-f <filename>]  [-a <filename>] [-suffixskip <0|1>] [-bwaskip <0|1>] [-kmerskip <0|1>] [-kmer-size <int>] [-abundance-min <int>]`
 
 
 Where: 
@@ -107,7 +107,10 @@ Where:
 `-bwaskip <0|1>`: ContigValidator uses BWA to align the contigs to the reference. To skip this step, set the value of this option to 1.  (Default: 0)
 
 
-`-kmer-size <int>` The size of the kmers used. (Default: 30) 
+`-kmerskip <0|1>`: ContigValidator uses kmer counts to figure out recall and precision. To skip this step, set the value of this option to 1. This option must be specified if the -kmer-size option has not been specified.
+
+
+`-kmer-size <int>` The size of the kmers used. This option must be specified if the -kmerskip option has not been specified. 
 
 
 `-abundance-min <int>`: Kmers that occur in the contigs less than abundance-min times are treated as not present in the contig file.  (Default: 3) 
