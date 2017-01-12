@@ -1,2 +1,2 @@
-FILENAME	Align Percentage	BWA Percentage	Percentage of Kmers from Reference File in Input File	Percentage of Kmers from Input File in Reference File
-test/reads.fa	22.136	100.00%	100.0%	1.27982540829%
+FILENAME	%exact	%align	recall	precision
+test/reads.fa	22.136	100.00%	100.0%	1.56125546872%

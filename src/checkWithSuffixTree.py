@@ -64,7 +64,7 @@ stree = pickle.load( open( suffixTree, "rb" ) )
 print "Suffix Tree loaded"
 with open(alignmentResults, 'w+') as f:
 	c=''
-	c+="Align Percentage" + newLine
+	c+="%exact" + newLine
 	f.write(c)
 for filename in inputFiles:
 	inputFasta=[]
@@ -94,7 +94,7 @@ for filename in inputFiles:
 	# print "inputFasta coming up"
 	# for i in inputFasta:
 	# 	print i
-	outputResultsFile = filename+".alignments"
+	outputResultsFile = filename+".exact"
 
 	# if(len(inputFasta)!=len(inputFastaId)):
 	# 	print "some problem because total number of reads don't match total number of ids"

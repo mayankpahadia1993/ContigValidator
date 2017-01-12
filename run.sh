@@ -12,14 +12,17 @@ alignment="alignmentResults.txt"
 suffixskip=0
 suffixsave=1
 bwaskip=0
+kmerskip=0
 flagReference=0
 flagSuffix=0
 flagInput=0
+flagKmer=0
 clean=0
 RED='\033[0;31m'
 NC='\033[0m' #No Color
 kmersize=30
-abundancemin=3
+abundancemin=1
+referenceAbundanceMin=1
 
 optionInfo="-r -s -i|-f are compulsory options. -i can be multiple \n\
 -r | --reference filename -> for passing the reference file\n\
@@ -28,7 +31,9 @@ optionInfo="-r -s -i|-f are compulsory options. -i can be multiple \n\
 -a | --alignment filename -> filename is the file in which alignment results will be shown. Default Value is alignmentResults.txt\n\
 -f | --file filename -> filename is a file which contains the input filenames\n\
 -suffixskip 1 -> to skip the Suffix Tree Creation. The default value is 0 and will create the Suffix Tree\n\
+-suffixsave 0 -> to not save the Suffix Tree. The default value is 1 and will save the Suffix Tree\n\
 -bwaskip 1 -> to skip the bwa step. The default value is 0 and it will do the bwa step\n\
+-kmerskip 1 -> to skip the kmer step. The default value is 0 and it will do the kmer step\n\
 -kmer-size Integer -> The integer given here would be chosen as the kmer size. Default is 30. \n\
 -abundance-min Integer -> The integer given here would be chosen as the abundance min. Default is 3. \n\
 -h | --help -> for help\n\
@@ -63,15 +68,21 @@ while [ "$1" != "" ]; do
 								;;
 		-suffixsave )			shift
 								suffixsave=$1
+								flagSuffix=1
 								;;
 		-bwaskip )				shift
 								bwaskip=$1
 								;;
 		-kmer-size )			shift
 								kmersize=$1
+								flagKmer=1
 								;;
 		-abundance-min )		shift
 								abundancemin=$1
+								;;
+		-kmerskip )				shift
+								kmerskip=$1
+								flagKmer=1
 								;;
 		-clean )				shift
 								clean=$1
@@ -101,6 +112,22 @@ fi
 if [ "$flagInput" = 0 ]; then
 	echo "You didn't set the input flag (-i | --input) or the file flag(-f | --file). You need to set one of them."
 	printf -- "$optionInfo"
+	exit
+fi
+
+if [ "$flagKmer" = 0 ]; then
+	echo "You didn't set the kmerskip flag (-kmerskip) or the kmer-size flag(-kmer-size). You need to set one of them."
+	printf -- "$optionInfo"
+	exit
+fi
+
+if ["$abundancemin" -le 0 ]; then
+	echo "Abundance min can't be 0 or negative"
+	exit
+fi
+
+if ["$kmersize" -le 0 ]; then
+	echo "Kmer Size can't be 0 or negative"
 	exit
 fi
 
@@ -161,7 +188,7 @@ if [ "$suffixsave" = 1 ]; then
 else
 	echo "Not saving Suffix Tree"
 	## Adding filenames to the $alignment output file
-	echo "FILENAME" > $alignment
+	echo "Filename" > $alignment
 	for i in "${inputFileArray[@]}"
 	do
 		echo $i >> "$alignment"
@@ -209,7 +236,7 @@ if [ "$bwaskip" = 0 ]; then
 
 	# align the input files with the reference file
 	bwaOutput=""
-	echo "BWA Percentage" > tempBwaOutput.txt
+	echo "%align" > tempBwaOutput.txt
 	for i in "${inputFileArray[@]}"
 	do
 		output="$i.bwa.bam"
@@ -252,47 +279,23 @@ else
 	echo "Skipping BWA"
 fi
 
-echo "Kmer size = $kmersize"
-echo "Abundance Min = $abundancemin"
+if [ "$kmerskip" = 0 ]; then
 
-## dsk on reference 
-h5file="$referenceGenome.h5"
-dsk -file $referenceGenome -kmer-size $kmersize -abundance-min $abundancemin -out $h5file 2> tempError.txt
-if [ "$?" -gt 0 ]; then
-		printf "${RED}ERROR - "
-		# echo -e "I ${RED}love${NC}"
-		cat tempError.txt
-		printf "${NC}"
-fi
-echo "dsk done"
+	echo "Kmer size = $kmersize"
+	echo "Abundance Min = $abundancemin"
 
-kmercountfile="$referenceGenome.kmercount"
-dsk2ascii -file $h5file -out $kmercountfile 2> tempError.txt
-if [ "$?" -gt 0 ]; then
-		printf "${RED}ERROR - "
-		# echo -e "I ${RED}love${NC}"
-		cat tempError.txt
-		printf "${NC}"
-fi
-echo "dsk2ascii done"
-if [ "$clean" = 0 ]; then
-	rm -f $h5file
-fi
-
-## dsk on files
-
-for i in "${inputFileArray[@]}"
-do
-	h5file="$i.h5"
-	dsk -file $i -kmer-size $kmersize -abundance-min $abundancemin -out $h5file 2> tempError.txt
+	## dsk on reference 
+	h5file="$referenceGenome.h5"
+	dsk -file $referenceGenome -kmer-size $kmersize -abundance-min $referenceAbundanceMin -out $h5file 2> tempError.txt
 	if [ "$?" -gt 0 ]; then
 			printf "${RED}ERROR - "
 			# echo -e "I ${RED}love${NC}"
 			cat tempError.txt
 			printf "${NC}"
 	fi
-	h5file="$i.h5"
-	kmercountfile="$i.kmercount"
+	echo "dsk done"
+
+	kmercountfile="$referenceGenome.kmercount"
 	dsk2ascii -file $h5file -out $kmercountfile 2> tempError.txt
 	if [ "$?" -gt 0 ]; then
 			printf "${RED}ERROR - "
@@ -300,43 +303,73 @@ do
 			cat tempError.txt
 			printf "${NC}"
 	fi
+	echo "dsk2ascii done"
 	if [ "$clean" = 0 ]; then
 		rm -f $h5file
 	fi
-done
 
-##Setting up the input for findCommonKmers.py file
+	## dsk on files
 
-commonKmerInputFile=""
-inputkmercountfile=""
-for i in "${inputFileArray[@]}"
-do
-	file1="$i.commonKmers12"
-	file2="$i.commonKmers21"
-	inputkmercountfile+=" $i.kmercount"
-	commonKmerInputFile+=" $i.kmercount $file1 $file2"
-done
+	for i in "${inputFileArray[@]}"
+	do
+		h5file="$i.h5"
+		dsk -file $i -kmer-size $kmersize -abundance-min $abundancemin -out $h5file 2> tempError.txt
+		if [ "$?" -gt 0 ]; then
+				printf "${RED}ERROR - "
+				# echo -e "I ${RED}love${NC}"
+				cat tempError.txt
+				printf "${NC}"
+		fi
+		h5file="$i.h5"
+		kmercountfile="$i.kmercount"
+		dsk2ascii -file $h5file -out $kmercountfile 2> tempError.txt
+		if [ "$?" -gt 0 ]; then
+				printf "${RED}ERROR - "
+				# echo -e "I ${RED}love${NC}"
+				cat tempError.txt
+				printf "${NC}"
+		fi
+		if [ "$clean" = 0 ]; then
+			rm -f $h5file
+		fi
+	done
 
-## Calling findCommonKmers.py file
+	##Setting up the input for findCommonKmers.py file
 
-tempKmerOut="tempKmerOut.txt"
+	commonKmerInputFile=""
+	inputkmercountfile=""
+	for i in "${inputFileArray[@]}"
+	do
+		file1="$i.commonKmers12"
+		file2="$i.commonKmers21"
+		inputkmercountfile+=" $i.kmercount"
+		commonKmerInputFile+=" $i.kmercount $file1 $file2"
+	done
 
-python src/findCommonKmers.py $tempKmerOut "$referenceGenome.kmercount" $commonKmerInputFile > tempout.txt 2> tempError.txt
+	## Calling findCommonKmers.py file
 
-if [ "$?" = 0 ]; then
-	cat tempout.txt
-	paste $alignment $tempKmerOut > tempout.txt
-	cat tempout.txt > $alignment
-	rm -f $tempKmerOut
+	tempKmerOut="tempKmerOut.txt"
+
+	python src/findCommonKmers.py $tempKmerOut "$referenceGenome.kmercount" $commonKmerInputFile > tempout.txt 2> tempError.txt
+
+	if [ "$?" = 0 ]; then
+		cat tempout.txt
+		paste $alignment $tempKmerOut > tempout.txt
+		cat tempout.txt > $alignment
+		rm -f $tempKmerOut
+	else
+		printf "${RED}ERROR - "
+		# echo -e "I ${RED}love${NC}"
+		cat tempError.txt
+		printf "${NC}"
+	fi
+
+	rm -f tempout.txt
+	rm -f tempError.txt
+
 else
-	printf "${RED}ERROR - "
-	# echo -e "I ${RED}love${NC}"
-	cat tempError.txt
-	printf "${NC}"
+	echo "Skipping Kmer step"
 fi
-
-rm -f tempout.txt
-rm -f tempError.txt
 
 if [ "$clean" = 0 ]; then
 	echo "In clean"

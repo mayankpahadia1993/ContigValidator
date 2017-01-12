@@ -1,0 +1,3 @@
+FILENAME
+/Users/mayankpahadia/medvedevGroup/ecoli/FinalerrorRates0/ecoliReadsNew150-0-1.unitigs.fa
+/Users/mayankpahadia/medvedevGroup/ecoli/FinalerrorRates0/ecoliReadsNew150-0-1BubblePoppedFastaFile.fa
