@@ -29,7 +29,7 @@ delim="\t"
 
 out = open(tempKmerOut,'w')
 c=""
-c="Percentage of Kmers from Reference File in Input File" + delim + "Percentage of Kmers from Input File in Reference File" + "\n"
+c="recall" + delim + "precision" + "\n"
 out.write(c)
 
 with open(input1) as f:
