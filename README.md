@@ -176,12 +176,6 @@ The output is in the file specified with the option "-a". Each row represents an
 - %precision: the percentage of k-mers abundandtly present in the contig input file that are also present (exactly) in the reference file.
 
 
-Example - 
-
-
-FILENAME	%exact	%align	recall	precision
-
-test/reads.fa	22.136	100.00%	100.0%	1.27982540829%
 
 
 ###2. *.commonKmers12 
