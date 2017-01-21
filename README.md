@@ -1,6 +1,6 @@
 #ContigValidator
 
-This is a pipeline for validating the accuracy of a set of contigs with respect to a known referene genome. 
+This is a pipeline for validating the accuracy of a set of contigs with respect to a known reference genome. 
 The set of contigs can be just the read themselves, or unitigs, or any other type of contig.
 Given a fasta reference genome and a file containing a set of contigs, ContigValidator reports:
 
