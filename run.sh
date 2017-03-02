@@ -121,12 +121,12 @@ if [ "$flagKmer" = 0 ]; then
 	exit
 fi
 
-if ["$abundancemin" -le 0 ]; then
+if [ "$abundancemin" -le 0 ]; then
 	echo "Abundance min can't be 0 or negative"
 	exit
 fi
 
-if ["$kmersize" -le 0 ]; then
+if [ "$kmersize" -le 0 ]; then
 	echo "Kmer Size can't be 0 or negative"
 	exit
 fi
