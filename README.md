@@ -100,7 +100,7 @@ After running this command, we can check the results ```cat results.assembly.txt
 #Detailed options
 
 
-`bash run.sh  -r <filename> [-s <filename>] [-suffixsave <0|1>] [-i <filename>]  [-f <filename>]  [-a <filename>] [-suffixskip <0|1>] [-bwaskip <0|1>] [-kmerskip <0|1>] [-kmer-size <int>] [-abundance-min <int>]`
+`bash run.sh  -r <filename> [-s <filename>] [-suffixsave <0|1>] [-i <filename>]  [-f <filename>]  [-a <filename>] [-suffixskip <0|1>] [-cppsuffix <0|1>] [-bwaskip <0|1>] [-kmerskip <0|1>] [-kmer-size <int>] [-abundance-min <int>]`
 
 
 Where: 
@@ -124,6 +124,8 @@ Where:
 
 
 `-suffixskip <0|1>`: ContigValidator needs to build a suffix tree for the reference file before doing alignment. By default (value 0), the suffix tree is created on the fly and written to the file specified by the -s option so that it can be reused in future runs. If, on the other hand, a suffix tree file is already available from a previous run, then you can set suffixskip to 1 in order to skip the creation of the suffix tree and instead load it from the fly specified by the -s option.
+
+`-cppsuffix <0|1>`: This option lets the user choose between Python and C++ implementations. C++ implementation is more efficient and provides the same level of accuracy. C++ implementation is recommended. To use Python, set the value to 0. To use C++, set the value to 1. (Default: 1)
 
 
 `-bwaskip <0|1>`: ContigValidator uses BWA to align the contigs to the reference. To skip this step, set the value of this option to 1.  (Default: 0)
