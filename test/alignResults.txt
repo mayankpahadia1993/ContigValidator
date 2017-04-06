@@ -1,2 +1,2 @@
-FILENAME	%exact	%align	recall	precision
-test/reads.fa	22.136	100.00%	100.0%	1.56125546872%
+Filename	%exact	%align	recall	precision
+test/reads.fa	22.1362	100.00%	100%	1.56126%

@@ -10,6 +10,7 @@ inputFiles=""
 inputFileArray=()
 alignment="alignmentResults.txt"
 suffixskip=0
+cppsuffix=1
 suffixsave=1
 bwaskip=0
 kmerskip=0
@@ -65,6 +66,9 @@ while [ "$1" != "" ]; do
 								;;
         -suffixskip )			shift
 								suffixskip=$1
+								;;
+		-cppsuffix )			shift
+								cppsuffix=$1
 								;;
 		-suffixsave )			shift
 								suffixsave=$1
@@ -142,51 +146,9 @@ if [ -n "$files" ]; then
 fi
 
 ## Suffix Tree for simple exact matching
-
-if [ "$suffixsave" = 1 ]; then
-	if [ "$suffixskip" = 0 ]; then
-		echo "Creating the Suffix Tree"
-		python src/createSuffixTree.py $referenceGenome $suffixTreeOutput > tempout.txt 2> tempError.txt
-		if [ "$?" = 0 ]; then
-			cat tempout.txt
-		else
-			printf "${RED}ERROR - "
-			# echo -e "I ${RED}love${NC}"
-			cat tempError.txt
-			printf "${NC}"
-		fi
-	else
-		echo "Skipping Suffix Tree creation and using the suffix tree in $suffixTreeOutput"
-	fi
-
-
-	## Adding filenames to the $alignment output file
-	echo "FILENAME" > $alignment
-	for i in "${inputFileArray[@]}"
-	do
-		echo $i >> "$alignment"
-	done
-
-
-	## Check of input files with simple exact matching
-
-	echo "Checking the input files against the tree"
-	python src/checkWithSuffixTree.py $suffixTreeOutput tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
-
-	if [ "$?" = 0 ]; then
-		cat tempout.txt
-		paste $alignment tempSuffix.txt > tempout.txt
-		cat tempout.txt > $alignment
-		rm -f tempSuffix.txt
-	else
-		printf "${RED}ERROR - "
-		# echo -e "I ${RED}love${NC}"
-		cat tempError.txt
-		printf "${NC}"
-	fi
-
-else
-	echo "Not saving Suffix Tree"
+if [ "$cppsuffix" = 1 ]; then
+	echo "Running C++ Suffix Tree"
+	g++ -std=c++11 -O3 -DNDEBUG -I ~/include -L ~/lib src/program.cpp -o src/program -lsdsl -ldivsufsort -ldivsufsort64
 	## Adding filenames to the $alignment output file
 	echo "Filename" > $alignment
 	for i in "${inputFileArray[@]}"
@@ -198,7 +160,11 @@ else
 	## Check of input files with simple exact matching
 
 	echo "Checking the input files against the tree"
-	python src/finalAlign.py $referenceGenome tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
+	# python src/finalAlign.py $referenceGenome tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
+	# src/program $referenceGenome tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
+	src/program $referenceGenome tempSuffix.txt $inputFiles 2> tempError.txt
+	
+	# time ~/medvedevGroup/playWithSDSL/program ../ecoliReference.fa ecoliReadsNew150-0-1BubblePoppedFastaFile.fa log.txt
 
 	if [ "$?" = 0 ]; then
 		cat tempout.txt
@@ -211,7 +177,79 @@ else
 		cat tempError.txt
 		printf "${NC}"
 	fi
+	echo "Exact Alignment done"
+else
+	if [ "$suffixsave" = 1 ]; then
+		if [ "$suffixskip" = 0 ]; then
+			echo "Creating the Suffix Tree"
+			python src/createSuffixTree.py $referenceGenome $suffixTreeOutput > tempout.txt 2> tempError.txt
+			if [ "$?" = 0 ]; then
+				cat tempout.txt
+			else
+				printf "${RED}ERROR - "
+				# echo -e "I ${RED}love${NC}"
+				cat tempError.txt
+				printf "${NC}"
+			fi
+		else
+			echo "Skipping Suffix Tree creation and using the suffix tree in $suffixTreeOutput"
+		fi
+
+
+		## Adding filenames to the $alignment output file
+		echo "FILENAME" > $alignment
+		for i in "${inputFileArray[@]}"
+		do
+			echo $i >> "$alignment"
+		done
+
+
+		## Check of input files with simple exact matching
+
+		echo "Checking the input files against the tree"
+		python src/checkWithSuffixTree.py $suffixTreeOutput tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
+
+		if [ "$?" = 0 ]; then
+			cat tempout.txt
+			paste $alignment tempSuffix.txt > tempout.txt
+			cat tempout.txt > $alignment
+			rm -f tempSuffix.txt
+		else
+			printf "${RED}ERROR - "
+			# echo -e "I ${RED}love${NC}"
+			cat tempError.txt
+			printf "${NC}"
+		fi
+
+	else
+		echo "Not saving Suffix Tree"
+		## Adding filenames to the $alignment output file
+		echo "Filename" > $alignment
+		for i in "${inputFileArray[@]}"
+		do
+			echo $i >> "$alignment"
+		done
+
+
+		## Check of input files with simple exact matching
+
+		echo "Checking the input files against the tree"
+		python src/finalAlign.py $referenceGenome tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
+
+		if [ "$?" = 0 ]; then
+			cat tempout.txt
+			paste $alignment tempSuffix.txt > tempout.txt
+			cat tempout.txt > $alignment
+			rm -f tempSuffix.txt
+		else
+			printf "${RED}ERROR - "
+			# echo -e "I ${RED}love${NC}"
+			cat tempError.txt
+			printf "${NC}"
+		fi
+	fi
 fi
+	
 
 
 
@@ -350,7 +388,13 @@ if [ "$kmerskip" = 0 ]; then
 
 	tempKmerOut="tempKmerOut.txt"
 
-	python src/findCommonKmers.py $tempKmerOut "$referenceGenome.kmercount" $commonKmerInputFile > tempout.txt 2> tempError.txt
+	# python src/findCommonKmers.py $tempKmerOut "$referenceGenome.kmercount" $commonKmerInputFile > tempout.txt 2> tempError.txt
+	## Change to C++ code for findCommonKmers.cpp here
+
+	
+	g++ -std=c++0x -o src/findCommonKmers src/findCommonKmers.cpp
+	src/findCommonKmers "$referenceGenome.kmercount" $tempKmerOut $inputkmercountfile > tempout.txt 2> tempError.txt
+
 
 	if [ "$?" = 0 ]; then
 		cat tempout.txt
