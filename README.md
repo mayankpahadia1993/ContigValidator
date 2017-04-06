@@ -43,6 +43,7 @@ This pipeline does the following things -
 
 		# Install using homebrew
 		brew install samtools
+5. SDSL-lite - version used 2.0, https://github.com/simongog/sdsl-lite
 
 #Installation
 
