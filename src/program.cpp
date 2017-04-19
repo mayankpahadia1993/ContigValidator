@@ -73,11 +73,7 @@ int main(int argc, char*argv[]) {
     // cout << "'si' occurs " << sdsl::count(fm_index,"si") << " times.\n";
     cout << "Suffix array created\n";
 
-    vector<string> contigs;
-    vector<string> segmentId;
-    string tempSegmentId="";
-    int counterOfContigs = 0;
-    string tempContig="";
+    
 
     // Suffix tree has been created and now we are looking through the input files.
 
@@ -89,6 +85,12 @@ int main(int argc, char*argv[]) {
     alignRes << tempres;
 
     for(int ijk=0; ijk<inputFileNames.size();ijk++){
+
+        vector<string> contigs;
+        vector<string> segmentId;
+        string tempSegmentId="";
+        int counterOfContigs = 0;
+        string tempContig="";
 
         cout << "reading - " << inputFileNames[ijk] << endl;
         in.open(inputFileNames[ijk]);
@@ -113,7 +115,7 @@ int main(int argc, char*argv[]) {
         		tempContig+=a;
         	}
         }
-        
+
         contigs.push_back(tempContig);
         cout << "Read the reads file\n";
         cout << "Total contigs - " << contigs.size() << endl;
