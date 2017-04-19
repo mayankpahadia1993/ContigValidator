@@ -64,6 +64,8 @@ int main(int argc, char* argv[])
 		inputfile2 = inputFileNames[ijk];
 		outputfile1 = common12[ijk];
 		outputfile2 = common21[ijk];
+		commonKmers=0;
+		count2=0;
 
 		input.open(inputfile2);
 		output.open(outputfile1);

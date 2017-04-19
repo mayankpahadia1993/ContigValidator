@@ -113,7 +113,8 @@ int main(int argc, char*argv[]) {
         		tempContig+=a;
         	}
         }
-
+        
+        contigs.push_back(tempContig);
         cout << "Read the reads file\n";
         cout << "Total contigs - " << contigs.size() << endl;
 
