@@ -136,8 +136,13 @@ int main(int argc, char*argv[]) {
                 out << segmentId[i] << delim << "0" << endl;
         	}
         }
-
-        float percentage = commonContigsCounter * 100.0 / contigs.size();
+        float percentage;
+        if(contigs.size() == 0){
+            percentage = 0;
+        }else{
+            percentage = commonContigsCounter * 100.0 / contigs.size();
+        }
+        
 
         cout << inputFileNames[ijk] << " percentage aligned - " << percentage << endl;
 

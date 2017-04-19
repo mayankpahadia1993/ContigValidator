@@ -162,7 +162,7 @@ if [ "$cppsuffix" = 1 ]; then
 	echo "Checking the input files against the tree"
 	# python src/finalAlign.py $referenceGenome tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
 	# src/program $referenceGenome tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
-	src/program $referenceGenome tempSuffix.txt $inputFiles 2> tempError.txt
+	src/program $referenceGenome tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
 	
 	# time ~/medvedevGroup/playWithSDSL/program ../ecoliReference.fa ecoliReadsNew150-0-1BubblePoppedFastaFile.fa log.txt
 

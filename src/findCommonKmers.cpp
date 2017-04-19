@@ -107,6 +107,12 @@ int main(int argc, char* argv[])
 		cout << inputfile1 << " total kmers - " << count1 << endl;
 		cout << inputfile2 << " total kmers - " << count2 << endl;
 		cout <<"common kmers - " << commonKmers << endl;
+		if(count1==0){
+			count1=1;
+		}
+		if(count2==0){
+			count2=1;
+		}
 
 		double percent = commonKmers*1.0 / count1;
 		percent*=100.0;
