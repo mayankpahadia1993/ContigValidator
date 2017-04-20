@@ -106,7 +106,8 @@ int main(int argc, char*argv[]) {
                     tempSegmentId+=a[tempI];
                     tempI++;
                 }
-                segmentId.push_back(tempSegmentId);
+                // segmentId.push_back(tempSegmentId);
+                segmentId.push_back(a);
         		tempContig="";
         		counterOfContigs++;
         	}else{
