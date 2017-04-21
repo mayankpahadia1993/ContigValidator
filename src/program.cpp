@@ -101,11 +101,11 @@ int main(int argc, char*argv[]) {
         			contigs.push_back(tempContig);
         		}
                 int tempI=1;
-                tempSegmentId="";
-                while(a[tempI]!=' '){
-                    tempSegmentId+=a[tempI];
-                    tempI++;
-                }
+                // tempSegmentId="";
+                // while(a[tempI]!=' '){
+                //     tempSegmentId+=a[tempI];
+                //     tempI++;
+                // }
                 // segmentId.push_back(tempSegmentId);
                 segmentId.push_back(a);
         		tempContig="";
