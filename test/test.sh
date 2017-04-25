@@ -2,7 +2,7 @@ RED='\033[0;31m'
 BLUE='\033[0;34m'
 NC='\033[0m' #No Color
 cd ..
-bash run.sh -r test/reference.fa -s test/suffixtree.p -i test/reads.fa -a test/alignresults.txt -kmer-size 25 -abundance-min 1 2> tempError.txt
+bash run.sh -r test/reference.fa -r test/reference2.fa -s test/suffixtree.p -i test/reads.fa -a test/alignresults.txt -kmer-size 25 -abundance-min 1 2> tempError.txt
 if [ "$?" = 0 ]; then
 	printf "${BLUE}TEST PASSED SUCCESSFULLY${NC}\n"
 else

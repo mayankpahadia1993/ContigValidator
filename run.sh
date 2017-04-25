@@ -8,6 +8,8 @@ fi
 interactive=
 inputFiles=""
 inputFileArray=()
+referenceGenomeArray=()
+multipleGenomeFile="multipleGenomeFile.txt"
 alignment="alignmentResults.txt"
 suffixskip=0
 cppsuffix=1
@@ -45,6 +47,7 @@ while [ "$1" != "" ]; do
     case $1 in
         -r | --reference )           shift
                                 referenceGenome=$1
+                                referenceGenomeArray+=($1)
                                 flagReference=1
                                 ;;
 
@@ -145,6 +148,20 @@ if [ -n "$files" ]; then
 	done < $files
 fi
 
+## For multiple genomes, we concatenate all of them to one file. 
+
+## to empty the contents of the file
+> $multipleGenomeFile
+
+##concatenate every file to multipleGenomeFile
+for i in "${referenceGenomeArray[@]}"
+do
+	cat $i >> $multipleGenomeFile
+done
+
+##the first reference file given is assumed as the main reference file without any mutations or substitutions
+referenceGenome=${referenceGenomeArray[0]}
+
 ## Suffix Tree for simple exact matching
 if [ "$cppsuffix" = 1 ]; then
 	echo "Running C++ Suffix Tree"
@@ -162,7 +179,10 @@ if [ "$cppsuffix" = 1 ]; then
 	echo "Checking the input files against the tree"
 	# python src/finalAlign.py $referenceGenome tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
 	# src/program $referenceGenome tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
-	src/program $referenceGenome tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
+	# src/program $referenceGenome tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
+
+	##Performing it with multipleGenomeFile
+	src/program $multipleGenomeFile tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
 	
 	# time ~/medvedevGroup/playWithSDSL/program ../ecoliReference.fa ecoliReadsNew150-0-1BubblePoppedFastaFile.fa log.txt
 
@@ -182,7 +202,11 @@ else
 	if [ "$suffixsave" = 1 ]; then
 		if [ "$suffixskip" = 0 ]; then
 			echo "Creating the Suffix Tree"
-			python src/createSuffixTree.py $referenceGenome $suffixTreeOutput > tempout.txt 2> tempError.txt
+			# python src/createSuffixTree.py $referenceGenome $suffixTreeOutput > tempout.txt 2> tempError.txt
+
+			##Performing it with multipleGenomeFile
+			python src/createSuffixTree.py $multipleGenomeFile $suffixTreeOutput > tempout.txt 2> tempError.txt
+
 			if [ "$?" = 0 ]; then
 				cat tempout.txt
 			else
@@ -234,7 +258,10 @@ else
 		## Check of input files with simple exact matching
 
 		echo "Checking the input files against the tree"
-		python src/finalAlign.py $referenceGenome tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
+		# python src/finalAlign.py $referenceGenome tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
+
+		##Performing it with multipleGenomeFile
+		python src/finalAlign.py $multipleGenomeFile tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
 
 		if [ "$?" = 0 ]; then
 			cat tempout.txt
@@ -324,7 +351,12 @@ if [ "$kmerskip" = 0 ]; then
 
 	## dsk on reference 
 	h5file="$referenceGenome.h5"
-	dsk -file $referenceGenome -kmer-size $kmersize -abundance-min $referenceAbundanceMin -out $h5file 2> tempError.txt
+	# dsk -file $referenceGenome -kmer-size $kmersize -abundance-min $referenceAbundanceMin -out $h5file 2> tempError.txt
+
+	##Performing it with multipleGenomeFile
+	dsk -file $multipleGenomeFile -kmer-size $kmersize -abundance-min $referenceAbundanceMin -out $h5file 2> tempError.txt
+
+
 	if [ "$?" -gt 0 ]; then
 			printf "${RED}ERROR - "
 			# echo -e "I ${RED}love${NC}"
@@ -420,6 +452,7 @@ if [ "$clean" = 0 ]; then
 	rm -f $kmercountfile
 	rm -f $inputkmercountfile
 	rm -f $referenceGenome.*
+	rm -f $multipleGenomeFile
 fi
 
 
