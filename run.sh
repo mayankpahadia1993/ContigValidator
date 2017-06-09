@@ -452,7 +452,7 @@ if [ "$clean" = 0 ]; then
 	rm -f $kmercountfile
 	rm -f $inputkmercountfile
 	rm -f $referenceGenome.*
-	rm -f $multipleGenomeFile
+	# rm -f $multipleGenomeFile
 fi
 
 

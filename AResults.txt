@@ -1,0 +1,2 @@
+Filename	%exact	recall	precision
+/Users/mayankpahadia/medvedevGroup/ecoli/NNN10errorRates0/try.read1.fa	13.37	31.5776%	98.3718%
