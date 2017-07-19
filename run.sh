@@ -354,7 +354,7 @@ if [ "$kmerskip" = 0 ]; then
 	# dsk -file $referenceGenome -kmer-size $kmersize -abundance-min $referenceAbundanceMin -out $h5file 2> tempError.txt
 
 	##Performing it with multipleGenomeFile
-	dsk -file $multipleGenomeFile -kmer-size $kmersize -abundance-min $referenceAbundanceMin -out $h5file 2> tempError.txt
+	dsk -nb-cores 2 -file $multipleGenomeFile -kmer-size $kmersize -abundance-min $referenceAbundanceMin -out $h5file 2> tempError.txt
 
 
 	if [ "$?" -gt 0 ]; then
@@ -366,7 +366,7 @@ if [ "$kmerskip" = 0 ]; then
 	echo "dsk done"
 
 	kmercountfile="$referenceGenome.kmercount"
-	dsk2ascii -file $h5file -out $kmercountfile 2> tempError.txt
+	dsk2ascii -nb-cores 2 -file $h5file -out $kmercountfile 2> tempError.txt
 	if [ "$?" -gt 0 ]; then
 			printf "${RED}ERROR - "
 			# echo -e "I ${RED}love${NC}"
@@ -383,7 +383,7 @@ if [ "$kmerskip" = 0 ]; then
 	for i in "${inputFileArray[@]}"
 	do
 		h5file="$i.h5"
-		dsk -file $i -kmer-size $kmersize -abundance-min $abundancemin -out $h5file 2> tempError.txt
+		dsk -nb-cores 2 -file $i -kmer-size $kmersize -abundance-min $abundancemin -out $h5file 2> tempError.txt
 		if [ "$?" -gt 0 ]; then
 				printf "${RED}ERROR - "
 				# echo -e "I ${RED}love${NC}"
@@ -392,7 +392,7 @@ if [ "$kmerskip" = 0 ]; then
 		fi
 		h5file="$i.h5"
 		kmercountfile="$i.kmercount"
-		dsk2ascii -file $h5file -out $kmercountfile 2> tempError.txt
+		dsk2ascii -nb-cores 2 -file $h5file -out $kmercountfile 2> tempError.txt
 		if [ "$?" -gt 0 ]; then
 				printf "${RED}ERROR - "
 				# echo -e "I ${RED}love${NC}"
