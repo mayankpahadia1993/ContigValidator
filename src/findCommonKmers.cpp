@@ -3,11 +3,12 @@
 #include <unordered_map>
 #include <vector>
 using namespace std;
+
 int main(int argc, char* argv[])
 {
 	if(argc < 1){
 		cout << "Provide inputfile as command line arguments\n";
-		cout << "Example - ./a.out input1.txt input2.txt commonKmersFrom1in2.txt commonKmersFrom2in1.txt \n";
+		cout << "Example: findCommonKmers input1.txt input2.txt commonKmersFrom1in2.txt commonKmersFrom2in1.txt \n";
 		exit(0);
 	}
 	

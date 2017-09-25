@@ -1,9 +1,18 @@
 #!/bin/bash
 
+tmpoutfile=tmp_out.txt
+tmperrorfile=tmp_err.txt
+tmpsuffixfile=temp_suffix.txt
+tmpbwafile=tempBwaOutput.txt
+
+function sane_quit() {
+    rm -f $tmpoutfile $tmperrorfile $mutipleGenomFile $tmpsuffixfile $tmpbwafile
+    exit
+}
+
 if [ $# -lt 1 ]; then
     echo "Use -h | --help for help"
     exit
-
 fi
 interactive=
 inputFiles=""
@@ -139,7 +148,6 @@ if [ "$kmersize" -le 0 ]; then
 fi
 
 if [ -n "$files" ]; then
-    # echo "You have set the -f | --file option. Hence we will check the files mentioned in $files"
     inputFiles=""
     inputFileArray=()
     while read line; do    
@@ -149,229 +157,147 @@ if [ -n "$files" ]; then
 fi
 
 ## For multiple genomes, we concatenate all of them to one file. 
-
 ## to empty the contents of the file
 > $multipleGenomeFile
 
 ##concatenate every file to multipleGenomeFile
-for i in "${referenceGenomeArray[@]}"
-do
-	cat $i >> $multipleGenomeFile
-done
+cat ${referenceGenomeArray} > $multipleGenomeFile
+# for i in "${referenceGenomeArray[@]}"
+# do
+# 	cat $i >> $multipleGenomeFile
+# done
 
 ##the first reference file given is assumed as the main reference file without any mutations or substitutions
 referenceGenome=${referenceGenomeArray[0]}
 
 ## Suffix Tree for simple exact matching
-if [ "$cppsuffix" = 1 ]; then
-	echo "Running C++ Suffix Tree"
-	g++ -std=c++11 -O3 -DNDEBUG -I ~/include -L ~/lib src/program.cpp -o src/program -lsdsl -ldivsufsort -ldivsufsort64
-	## Adding filenames to the $alignment output file
-	echo "Filename" > $alignment
-	for i in "${inputFileArray[@]}"
-	do
-		echo $i >> "$alignment"
-	done
+echo "Running C++ Suffix Tree"
+cd src
+make 
+if [ $? -ne 0 ]; then
+    echo "Compilation failed.  Please check that sdsl is in your include path and in your library path."
+    cd ..
+    sane_quit
+fi
+cd ..
+## g++ -std=c++11 -O3 -DNDEBUG -I ~/include -L ~/lib src/program.cpp -o src/program -lsdsl -ldivsufsort -ldivsufsort64
+## Adding filenames to the $alignment output file
+echo "Filename" > $alignment
+echo ${inputFileArray} >> $alignment
+# for i in "${inputFileArray[@]}"
+# do
+# 	echo $i >> "$alignment"
+# done
 
 
-	## Check of input files with simple exact matching
+## Check of input files with simple exact matching
 
-	echo "Checking the input files against the tree"
-	# python src/finalAlign.py $referenceGenome tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
-	# src/program $referenceGenome tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
-	# src/program $referenceGenome tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
+echo "Checking the input files against the tree"
 
-	##Performing it with multipleGenomeFile
-	src/program $multipleGenomeFile tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
-	
-	# time ~/medvedevGroup/playWithSDSL/program ../ecoliReference.fa ecoliReadsNew150-0-1BubblePoppedFastaFile.fa log.txt
+##Performing it with multipleGenomeFile
+src/program $multipleGenomeFile $tmpsuffixfile $inputFiles > $tmpoutfile 2> $tmperrorfile
 
-	if [ "$?" = 0 ]; then
-		cat tempout.txt
-		paste $alignment tempSuffix.txt > tempout.txt
-		cat tempout.txt > $alignment
-		rm -f tempSuffix.txt
-	else
+if [ $? = 0 ]; then
+		cat $tmpoutfile
+		paste $alignment $tmpsuffixfile > $tmpoutfile
+		cat $tmpoutfile > $alignment
+		rm -f $tmpsuffixfile
+    rm -f $tmpoutfile
+    rm -f $tmperrorfile
+else
 		printf "${RED}ERROR - "
 		# echo -e "I ${RED}love${NC}"
-		cat tempError.txt
+		cat $tmperrorfile
 		printf "${NC}"
-	fi
-	echo "Exact Alignment done"
-else
-	if [ "$suffixsave" = 1 ]; then
-		if [ "$suffixskip" = 0 ]; then
-			echo "Creating the Suffix Tree"
-			# python src/createSuffixTree.py $referenceGenome $suffixTreeOutput > tempout.txt 2> tempError.txt
-
-			##Performing it with multipleGenomeFile
-			python src/createSuffixTree.py $multipleGenomeFile $suffixTreeOutput > tempout.txt 2> tempError.txt
-
-			if [ "$?" = 0 ]; then
-				cat tempout.txt
-			else
-				printf "${RED}ERROR - "
-				# echo -e "I ${RED}love${NC}"
-				cat tempError.txt
-				printf "${NC}"
-			fi
-		else
-			echo "Skipping Suffix Tree creation and using the suffix tree in $suffixTreeOutput"
-		fi
-
-
-		## Adding filenames to the $alignment output file
-		echo "FILENAME" > $alignment
-		for i in "${inputFileArray[@]}"
-		do
-			echo $i >> "$alignment"
-		done
-
-
-		## Check of input files with simple exact matching
-
-		echo "Checking the input files against the tree"
-		python src/checkWithSuffixTree.py $suffixTreeOutput tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
-
-		if [ "$?" = 0 ]; then
-			cat tempout.txt
-			paste $alignment tempSuffix.txt > tempout.txt
-			cat tempout.txt > $alignment
-			rm -f tempSuffix.txt
-		else
-			printf "${RED}ERROR - "
-			# echo -e "I ${RED}love${NC}"
-			cat tempError.txt
-			printf "${NC}"
-		fi
-
-	else
-		echo "Not saving Suffix Tree"
-		## Adding filenames to the $alignment output file
-		echo "Filename" > $alignment
-		for i in "${inputFileArray[@]}"
-		do
-			echo $i >> "$alignment"
-		done
-
-
-		## Check of input files with simple exact matching
-
-		echo "Checking the input files against the tree"
-		# python src/finalAlign.py $referenceGenome tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
-
-		##Performing it with multipleGenomeFile
-		python src/finalAlign.py $multipleGenomeFile tempSuffix.txt $inputFiles > tempout.txt 2> tempError.txt
-
-		if [ "$?" = 0 ]; then
-			cat tempout.txt
-			paste $alignment tempSuffix.txt > tempout.txt
-			cat tempout.txt > $alignment
-			rm -f tempSuffix.txt
-		else
-			printf "${RED}ERROR - "
-			# echo -e "I ${RED}love${NC}"
-			cat tempError.txt
-			printf "${NC}"
-		fi
-	fi
+    sane_quit
 fi
-	
-
-
-
-
+echo "Exact Alignment done"
 
 ## BWA
 
 if [ "$bwaskip" = 0 ]; then
-	echo "BWA - "
-	# Index the reference file
-
-	bwa index $referenceGenome > tempout.txt 2> tempError.txt
-
-	if [ "$?" = 0 ]; then
-		cat tempout.txt
-	else
-		printf "${RED}ERROR - "
-		# echo -e "I ${RED}love${NC}"
-		cat tempError.txt
-		printf "${NC}"
-	fi
-
-	# align the input files with the reference file
-	bwaOutput=""
-	echo "%align" > tempBwaOutput.txt
-	for i in "${inputFileArray[@]}"
-	do
-		output="$i.bwa.bam"
-		bwa mem $referenceGenome $i | samtools sort > $output 2> tempError.txt
-		if [ "$?" -gt 0 ]; then
-			printf "${RED}ERROR - "
-			# echo -e "I ${RED}love${NC}"
-			cat tempError.txt
-			printf "${NC}"
-		fi
-		samtools index $output 2> tempError.txt
-		if [ "$?" -gt 0 ]; then
-			printf "${RED}ERROR - "
-			# echo -e "I ${RED}love${NC}"
-			cat tempError.txt
-			printf "${NC}"
-		fi
-		samtools flagstat $output | grep mapped | cut -f 5 -d " "| cut -f 2 -d "(" | head -1 >> tempBwaOutput.txt 2> tempError.txt
-		if [ "$?" -gt 0 ]; then
-			printf "${RED}ERROR - "
-			# echo -e "I ${RED}love${NC}"
-			cat tempError.txt
-			printf "${NC}"
-		fi
-		# echo $tempBwaOutput >> tempBwaOutput.txt
-		# bwaOutput+="$i"
-		# bwaOutput+="\t"
-		# bwaOutput+=$tempBwaOutput
-		# bwaOutput+="\n"
-
-	done
-
-	# echo -e -n "$bwaOutput"
-
-	paste $alignment tempBwaOutput.txt > tempout.txt
-	cat tempout.txt > $alignment
-	rm -f tempBwaOutput.txt
-
+	  echo "BWA - "
+	  # Index the reference file
+    
+	  bwa index $referenceGenome > $tmpoutfile 2> $tmperrorfile
+    
+	  if [ "$?" = 0 ]; then
+		    cat $tmpoutfile
+	  else
+		    printf "${RED}ERROR - "
+		    # echo -e "I ${RED}love${NC}"
+		    cat $tmperrorfile
+		    printf "${NC}"
+        sane_quit
+	  fi
+    
+	  # align the input files with the reference file
+	  bwaOutput=""
+	  echo "%align" > $tmpbwafile
+	  for i in "${inputFileArray[@]}"
+	  do
+		    output="$i.bwa.bam"
+		    bwa mem $referenceGenome $i | samtools sort > $output 2> $tmperrorfile
+		    if [ "$?" -gt 0 ]; then
+			      printf "${RED}ERROR - "
+			      cat $tmperrorfile
+			      printf "${NC}"
+            sane_quit
+		    fi
+		    samtools index $output 2> $tmperrorfile
+		    if [ "$?" -gt 0 ]; then
+			      printf "${RED}ERROR - "
+			      cat $tmperrorfile
+			      printf "${NC}"
+            sane_quit
+		    fi
+		    samtools flagstat $output | grep mapped | cut -f 5 -d " "| cut -f 2 -d "(" | head -1 >> $tmpbwafile 2> $tmperrorfile
+		    if [ "$?" -gt 0 ]; then
+			      printf "${RED}ERROR - "
+			      # echo -e "I ${RED}love${NC}"
+			      cat $tmperrorfile
+			      printf "${NC}"
+		    fi
+	  done
+    
+	  # echo -e -n "$bwaOutput"
+    
+	  paste $alignment $tmpbwafile > $tmpoutfile
+	  cat $tmpoutfile > $alignment
+	  rm -f $tmpbwafile
 else
-	echo "Skipping BWA"
+	  echo "Skipping BWA"
 fi
 
 if [ "$kmerskip" = 0 ]; then
-
 	echo "Kmer size = $kmersize"
 	echo "Abundance Min = $abundancemin"
 
 	## dsk on reference 
 	h5file="$referenceGenome.h5"
-	# dsk -file $referenceGenome -kmer-size $kmersize -abundance-min $referenceAbundanceMin -out $h5file 2> tempError.txt
 
 	##Performing it with multipleGenomeFile
-	dsk -nb-cores 2 -file $multipleGenomeFile -kmer-size $kmersize -abundance-min $referenceAbundanceMin -out $h5file 2> tempError.txt
-
+	dsk -nb-cores 2 -file $multipleGenomeFile -kmer-size $kmersize -abundance-min $referenceAbundanceMin -out $h5file 2> $tmperrorfile
 
 	if [ "$?" -gt 0 ]; then
 			printf "${RED}ERROR - "
 			# echo -e "I ${RED}love${NC}"
-			cat tempError.txt
+			cat $tmperrorfile
 			printf "${NC}"
+      rm -rf $h5file
+      sane_quit
 	fi
 	echo "dsk done"
 
 	kmercountfile="$referenceGenome.kmercount"
-	dsk2ascii -nb-cores 2 -file $h5file -out $kmercountfile 2> tempError.txt
+	dsk2ascii -nb-cores 2 -file $h5file -out $kmercountfile 2> $tmperrorfile
 	if [ "$?" -gt 0 ]; then
 			printf "${RED}ERROR - "
 			# echo -e "I ${RED}love${NC}"
-			cat tempError.txt
+			cat $tmperrorfile
 			printf "${NC}"
+      rm -rf $h5file
+      sane_quit
 	fi
 	echo "dsk2ascii done"
 	if [ "$clean" = 0 ]; then
@@ -383,21 +309,25 @@ if [ "$kmerskip" = 0 ]; then
 	for i in "${inputFileArray[@]}"
 	do
 		h5file="$i.h5"
-		dsk -nb-cores 2 -file $i -kmer-size $kmersize -abundance-min $abundancemin -out $h5file 2> tempError.txt
+		dsk -nb-cores 2 -file $i -kmer-size $kmersize -abundance-min $abundancemin -out $h5file 2> $tmperrorfile
 		if [ "$?" -gt 0 ]; then
 				printf "${RED}ERROR - "
 				# echo -e "I ${RED}love${NC}"
-				cat tempError.txt
+				cat $tmperrorfile
 				printf "${NC}"
+        rm -rf $h5file
+        sane_quit
 		fi
 		h5file="$i.h5"
 		kmercountfile="$i.kmercount"
-		dsk2ascii -nb-cores 2 -file $h5file -out $kmercountfile 2> tempError.txt
+		dsk2ascii -nb-cores 2 -file $h5file -out $kmercountfile 2> $tmperrorfile
 		if [ "$?" -gt 0 ]; then
 				printf "${RED}ERROR - "
 				# echo -e "I ${RED}love${NC}"
-				cat tempError.txt
+				cat $tmperrorfile
 				printf "${NC}"
+        rm -rf $h5file
+        sane_quit
 		fi
 		if [ "$clean" = 0 ]; then
 			rm -f $h5file
@@ -410,38 +340,38 @@ if [ "$kmerskip" = 0 ]; then
 	inputkmercountfile=""
 	for i in "${inputFileArray[@]}"
 	do
-		file1="$i.commonKmers12"
-		file2="$i.commonKmers21"
-		inputkmercountfile+=" $i.kmercount"
-		commonKmerInputFile+=" $i.kmercount $file1 $file2"
+		inputkmercountfile+=" ${i}.kmercount"
+		commonKmerInputFile+=" ${i}.kmercount ${i}.commonKmers12 ${i}.commonKmers21"
 	done
-
-	## Calling findCommonKmers.py file
 
 	tempKmerOut="tempKmerOut.txt"
 
-	# python src/findCommonKmers.py $tempKmerOut "$referenceGenome.kmercount" $commonKmerInputFile > tempout.txt 2> tempError.txt
-	## Change to C++ code for findCommonKmers.cpp here
-
-	
-	g++ -std=c++0x -o src/findCommonKmers src/findCommonKmers.cpp
-	src/findCommonKmers "$referenceGenome.kmercount" $tempKmerOut $inputkmercountfile > tempout.txt 2> tempError.txt
-
+  cd src
+  make 
+  if [ $? -ne 0 ]; then
+      echo "Compilation failed.  Please check that sdsl is in your include path and in your library path."
+      cd ..
+      sane_quit
+  fi
+  cd ..
+	src/findCommonKmers "$referenceGenome.kmercount" $tempKmerOut $inputkmercountfile > $tmpoutfile 2> $tmperrorfile
 
 	if [ "$?" = 0 ]; then
-		cat tempout.txt
-		paste $alignment $tempKmerOut > tempout.txt
-		cat tempout.txt > $alignment
+		cat $tmpoutfile
+		paste $alignment $tempKmerOut > $tmpoutfile
+		cat $tmpoutfile > $alignment
 		rm -f $tempKmerOut
 	else
 		printf "${RED}ERROR - "
 		# echo -e "I ${RED}love${NC}"
-		cat tempError.txt
+		cat $tmperrorfile
 		printf "${NC}"
+    rm -rf $tempKmerOut $inputkmercountfile
+    sane_quit
 	fi
 
-	rm -f tempout.txt
-	rm -f tempError.txt
+	rm -f $tmpoutfile
+	rm -f $tmperrorfile
 
 else
 	echo "Skipping Kmer step"
@@ -455,5 +385,4 @@ if [ "$clean" = 0 ]; then
 	# rm -f $multipleGenomeFile
 fi
 
-
-# python src/findCommonKmers.py $tempKmerOut "$referenceGenome.kmercount" $commonKmerInputFile
+sane_quit

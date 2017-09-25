@@ -14,5 +14,5 @@ else
 fi
 
 rm -f tempError.txt
-
-# find test/ -type f ! -name 'reference.fa' ! -name 'reads.fa' ! -name 'test.sh' ! -name 'alignresults.txt' -delete
+rm test/reads.fa.*
+rm test/alignresults.txt
