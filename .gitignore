@@ -2,3 +2,4 @@
 src/findCommonKmers
 src/program
 *~
+src/count_kmers_kmc
