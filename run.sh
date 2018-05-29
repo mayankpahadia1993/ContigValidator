@@ -8,7 +8,7 @@ tmpbwafile=tempBwaOutput.txt
 SCRIPT_PATH="$(dirname $0)"
 
 function sane_quit() {
-    # rm -f $tmpoutfile $tmperrorfile $mutipleGenomFile $tmpsuffixfile $tmpbwafile
+    rm -f $tmpoutfile $tmperrorfile $mutipleGenomFile $tmpsuffixfile $tmpbwafile
     exit
 }
 
@@ -57,104 +57,103 @@ optionInfo="-r -s -i|-f are compulsory options. -i can be multiple \n\
 while [ "$1" != "" ]; do
     case $1 in
         -r | --reference )           shift
-            referenceGenome=$1
-            referenceGenomeArray+=($1)
-            flagReference=1
-            ;;
+                                     referenceGenome=$1
+                                     referenceGenomeArray+=($1)
+                                     flagReference=1
+                                     ;;
 
         -s | --suffixtree )    shift
-	    suffixTreeOutput=$1
-	    flagSuffix=1
-            ;;
+	                             suffixTreeOutput=$1
+	                             flagSuffix=1
+                               ;;
         -i | --input )			shift
-	    inputFiles="$inputFiles $1"
-	    inputFileArray+=($1)
-	    flagInput=1
-	    ;;
-	-a | --alignment )		shift
-	    alignment=$1
-	    ;;
+	                          inputFiles="$inputFiles $1"
+	                          inputFileArray+=($1)
+	                          flagInput=1
+	                          ;;
+	      -a | --alignment )		shift
+	                            alignment=$1
+	                            ;;
         -f | --file )			shift
-	    files=$1
-	    flagInput=1
-	    ;;
+	                        files=$1
+	                        flagInput=1
+	                        ;;
         -suffixskip )			shift
-	    suffixskip=$1
-	    ;;
-	-cppsuffix )			shift
-	    cppsuffix=$1
-	    ;;
-	-suffixsave )			shift
-	    suffixsave=$1
-	    flagSuffix=1
-	    ;;
-	-bwaskip )				shift
-	    bwaskip=$1
-	    ;;
-	-kmer-size )			shift
-	    kmersize=$1
-	    flagKmer=1
-	    ;;
-	-abundance-min )		shift
-	    abundancemin=$1
-	    ;;
-	-kmerskip )				shift
-	    kmerskip=$1
-	    flagKmer=1
-	    ;;
-	-clean )				shift
-	    clean=$1
-	    ;;
+	                        suffixskip=$1
+	                        ;;
+	      -cppsuffix )			shift
+	                        cppsuffix=$1
+	                        ;;
+	      -suffixsave )			shift
+	                        suffixsave=$1
+	                        flagSuffix=1
+	                        ;;
+	      -bwaskip )				shift
+	                        bwaskip=$1
+	                        ;;
+	      -kmer-size )			shift
+	                        kmersize=$1
+	                        flagKmer=1
+	                        ;;
+	      -abundance-min )		shift
+	                          abundancemin=$1
+	                          ;;
+	      -kmerskip )				shift
+	                        kmerskip=$1
+	                        flagKmer=1
+	                        ;;
+	      -clean )				shift
+	                      clean=$1
+	                      ;;
         -h | --help )           printf -- "$optionInfo"
-            exit
-            ;;
+                                exit
+                                ;;
         * )                     printf -- "$optionInfo"
-            exit 
+                                exit 
     esac
     shift
 done
 
-# echo "here"
 if [ "$flagReference" = 0 ]; then
-	echo "You didn't set the reference flag (-r | --reference)"
-	printf -- "$optionInfo"
-	exit
+	  echo "You didn't set the reference flag (-r | --reference)"
+	  printf -- "$optionInfo"
+	  exit
 fi
 
 if [ "$flagSuffix" = 0 ]; then
-	echo "You didn't set the suffix tree flag (-s | --suffixtree)"
-	printf -- "$optionInfo"
-	exit
+	  echo "You didn't set the suffix tree flag (-s | --suffixtree)"
+	  printf -- "$optionInfo"
+	  exit
 fi
 
 if [ "$flagInput" = 0 ]; then
-	echo "You didn't set the input flag (-i | --input) or the file flag(-f | --file). You need to set one of them."
-	printf -- "$optionInfo"
-	exit
+	  echo "You didn't set the input flag (-i | --input) or the file flag(-f | --file). You need to set one of them."
+	  printf -- "$optionInfo"
+	  exit
 fi
 
 if [ "$flagKmer" = 0 ]; then
-	echo "You didn't set the kmerskip flag (-kmerskip) or the kmer-size flag(-kmer-size). You need to set one of them."
-	printf -- "$optionInfo"
-	exit
+	  echo "You didn't set the kmerskip flag (-kmerskip) or the kmer-size flag(-kmer-size). You need to set one of them."
+	  printf -- "$optionInfo"
+	  exit
 fi
 
 if [ "$abundancemin" -le 0 ]; then
-	echo "Abundance min can't be 0 or negative"
-	exit
+	  echo "Abundance min can't be 0 or negative"
+	  exit
 fi
 
 if [ "$kmersize" -le 0 ]; then
-	echo "Kmer Size can't be 0 or negative"
-	exit
+	  echo "Kmer Size can't be 0 or negative"
+	  exit
 fi
 
 if [ -n "$files" ]; then
     inputFiles=""
     inputFileArray=()
     while read line; do    
-    inputFiles+="$inputFiles $line"
-    inputFileArray+=($line)
+        inputFiles+="$inputFiles $line"
+        inputFileArray+=($line)
     done < $files
 fi
 
@@ -165,14 +164,9 @@ fi
 
 ##concatenate every file to multipleGenomeFile
 cat ${referenceGenomeArray} > $multipleGenomeFile
-# for i in "${referenceGenomeArray[@]}"
-# do
-# 	cat $i >> $multipleGenomeFile
-# done
 
 ##the first reference file given is assumed as the main reference file without any mutations or substitutions
 referenceGenome=${referenceGenomeArray[0]}
-
 
 ## Suffix Tree for simple exact matching
 echo "Running C++ Suffix Tree"
@@ -184,10 +178,9 @@ if [ $? -ne 0 ]; then
     sane_quit
 fi
 cd ..
-## g++ -std=c++11 -O3 -DNDEBUG -I ~/include -L ~/lib src/program.cpp -o src/program -lsdsl -ldivsufsort -ldivsufsort64
+
 ## Adding filenames to the $alignment output file
 echo "Filename" > $alignment
-#echo ${inputFileArray} >> $alignment
 
 for i in "${inputFileArray[@]}"
 do
@@ -195,7 +188,6 @@ do
 done
 
 ## Check of input files with simple exact matching
-
 echo "Checking the input files against the tree"
 
 ##Performing it with multipleGenomeFile
@@ -210,7 +202,6 @@ if [ $? = 0 ]; then
     rm -f $tmperrorfile
 else
 		printf "${RED}ERROR - "
-		# echo -e "I ${RED}love${NC}"
 		cat $tmperrorfile
 		printf "${NC}"
     sane_quit
@@ -218,18 +209,15 @@ fi
 echo "Exact Alignment done"
 
 ## BWA
-
 if [ "$bwaskip" = 0 ]; then
 	  echo "BWA - "
 	  # Index the reference file
-    
 	  bwa index $referenceGenome > $tmpoutfile 2> $tmperrorfile
     
 	  if [ "$?" = 0 ]; then
 		    cat $tmpoutfile
 	  else
 		    printf "${RED}ERROR - "
-		    # echo -e "I ${RED}love${NC}"
 		    cat $tmperrorfile
 		    printf "${NC}"
         sane_quit
@@ -264,8 +252,6 @@ if [ "$bwaskip" = 0 ]; then
 		    fi
 	  done
     
-	  # echo -e -n "$bwaOutput"
-    
 	  paste $alignment $tmpbwafile > $tmpoutfile
 	  cat $tmpoutfile > $alignment
 	  rm -f $tmpbwafile
@@ -274,7 +260,6 @@ else
 fi
 
 # USE KMC FOR BETTER PERFOMANCE
-
 cp $alignment old-alignment.txt
 
 cd ${SCRIPT_PATH}/src
@@ -282,38 +267,34 @@ make
 cd ${SCRIPT_PATH}
 
 tmpKmerOut="/tmp/tmpkmerout.txt"
-
 if [ "$kmerskip" = 0 ]; then
-	echo "Kmer size = $kmersize"
-	echo "Abundance Min = $abundancemin"
+	  echo "Kmer size = $kmersize"
+	  echo "Abundance Min = $abundancemin"
 
-  ${0}/src/KMC/bin/kmc -t4 -ci1 -k$kmersize -fm $multipleGenomeFile mg /tmp
+    ${0}/src/KMC/bin/kmc -t4 -ci1 -k$kmersize -fm $multipleGenomeFile mg /tmp
 
-  echo -e "recall\tprecision" > $tmpKmerOut
-  for i in "${inputFileArray[@]}"
-  do
-      ${SCRIPT_PATH}/src/KMC/bin/kmc -t4 -ci$abundancemin -k$kmersize -fm $i $i.kmc /tmp
-      ${SCRIPT_PATH}/src/KMC/bin/kmc_tools simple mg -ci1 $i.kmc -ci1 intersect $i.tp -ci1
-      ${SCRIPT_PATH}/src/KMC/bin/kmc_tools simple mg -ci1 $i.kmc -ci1 kmers_subtract $i.fn -ci1
-      ${SCRIPT_PATH}/src/KMC/bin/kmc_tools simple mg -ci1 $i.kmc -ci1 reverse_kmers_subtract $i.fp -ci1
-      tp=$(./src/count_kmers_kmc $i.tp)
-      fn=$(./src/count_kmers_kmc $i.fn)
-      fp=$(./src/count_kmers_kmc $i.fp)
-      precision=$(bc -l <<< "scale=4; $tp * 100 / ($tp + $fp)")
-      recall=$(bc -l <<< "scale=4; $tp * 100 / ($tp + $fn)")
-      echo -e "$recall%\t$precision%" >> $tmpKmerOut
-  done
-  paste $alignment $tmpKmerOut > $tmpoutfile
-  cat $tmpoutfile > $alignment
-  # rm -f $rmpKmerOut
+    echo -e "recall\tprecision" > $tmpKmerOut
+    for i in "${inputFileArray[@]}"
+    do
+        ${SCRIPT_PATH}/src/KMC/bin/kmc -t4 -ci$abundancemin -k$kmersize -fm $i $i.kmc /tmp
+        ${SCRIPT_PATH}/src/KMC/bin/kmc_tools simple mg -ci1 $i.kmc -ci1 intersect $i.tp -ci1
+        ${SCRIPT_PATH}/src/KMC/bin/kmc_tools simple mg -ci1 $i.kmc -ci1 kmers_subtract $i.fn -ci1
+        ${SCRIPT_PATH}/src/KMC/bin/kmc_tools simple mg -ci1 $i.kmc -ci1 reverse_kmers_subtract $i.fp -ci1
+        tp=$(./src/count_kmers_kmc $i.tp)
+        fn=$(./src/count_kmers_kmc $i.fn)
+        fp=$(./src/count_kmers_kmc $i.fp)
+        precision=$(bc -l <<< "scale=4; $tp * 100 / ($tp + $fp)")
+        recall=$(bc -l <<< "scale=4; $tp * 100 / ($tp + $fn)")
+        echo -e "$recall%\t$precision%" >> $tmpKmerOut
+    done
+    paste $alignment $tmpKmerOut > $tmpoutfile
+    cat $tmpoutfile > $alignment
 fi
 
 if [ "$clean" = 0 ]; then
-	echo "In clean"
-	# rm -f $kmercountfile
-	# rm -f $inputkmercountfile
-	rm -f $referenceGenome.*
-	# rm -f $multipleGenomeFile
+	  echo "In clean"
+	  rm -f $referenceGenome.*
+    rm -f *.kmc_pre *.kmc_suf
 fi
 
 sane_quit
