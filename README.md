@@ -48,6 +48,14 @@ This pipeline does the following things -
 
 5. [SDSL-lite](https://github.com/simongog/sdsl-lite) - version used 2.0.  Headers should be present in the `CPATH` variable and libraries should be present in the `LIBRARY_PATH` variable.
 
+		# Install SDSL-lite
+		git clone https://github.com/simongog/sdsl-lite.git
+		cd sdsl-lite/
+		./install.sh
+		# Add those to your ~/.bashrc file
+		export CPATH=$HOME/include                                                                                                                                                                                        
+		export LIBRARY_PATH=$HOME/lib                                                                                                                                                                                     
+                              
 # Installation
 
 Clone the repository using the `--recursive` flag:
